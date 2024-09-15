@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/userdata_controller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
-import 'package:gymvita_connect/screens/dashboard_card_screens/workout/exercise_detail_page.dart';
+import 'package:gymvita_connect/screens/dashboard_card_screens/workout/exercise_page.dart';
+import 'package:gymvita_connect/utils/navigation.dart';
+import 'package:gymvita_connect/widgets/appbar.dart';
+import 'package:gymvita_connect/widgets/home/dashboard/workout_plan_tile.dart';
 
 class WorkOutPlanPage extends StatefulWidget {
   const WorkOutPlanPage({super.key});
@@ -13,50 +18,53 @@ class WorkOutPlanPage extends StatefulWidget {
 class _WorkOutPlanPageState extends State<WorkOutPlanPage> {
   @override
   Widget build(BuildContext context) {
+    TextTheme theme = Theme.of(context).textTheme;
+
+    final UserDataController userDataController = Get.find<UserDataController>();
     final WorkoutPlanController workoutPlanController = Get.find<WorkoutPlanController>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Workout Plan')),
-      body: FutureBuilder<List<dynamic>>(
-        future: workoutPlanController.fetchWorkoutPlan(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData) {
-            List<dynamic> workoutPlans = snapshot.data!;
+      appBar: const CustomAppBar(title: 'Workout Plan'),
+      body: Padding(
+        padding: EdgeInsets.all(20.h),
+        child: FutureBuilder<List<dynamic>>(
+          future: workoutPlanController.fetchWorkoutPlan(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-            return Expanded(
-              child: ListView.builder(
-                itemCount: workoutPlans.length,
-                itemBuilder: (context, index) {
-                  String day = workoutPlans[index].keys.first;
-                  String part = workoutPlans[index][day]['part'];
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-                  return ListTile(
-                    title: Text(day),
-                    subtitle: Text(part),
-                    onTap: () {
-                      List exercises = workoutPlans[index][day]['exercise'];
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ExerciseDetailPage(
-                            day: day,
-                            exercises: exercises,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No workout plans available.'));
+            }
+
+            var details = snapshot.data!;
+
+            return ListView.builder(
+              itemCount: details.length,
+              itemBuilder: (context, index) {
+                var item = details[index] as Map<String, dynamic>;
+                var day = item.keys.first;
+                var bodyPart = item[day]['part'];
+
+                return WorkoutPlanTile(
+                  ontap: () {
+                    navigateWithAnimation(
+                      context,
+                      ExercisePage(bodyPart: bodyPart),
+                    );
+                  },
+                  day: day,
+                  bodyPart: bodyPart,
+                );
+              },
             );
-          } else {
-            return const Center(child: Text('No data found'));
-          }
-        },
+          },
+        ),
       ),
     );
   }
