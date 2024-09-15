@@ -1,0 +1,374 @@
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+
+import { auth, db, storage } from ".";
+
+const currentMonthIndex = new Date().getMonth();
+const currentYear = new Date().getFullYear();
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const currentMonthName = months[currentMonthIndex];
+
+export async function uploadImage(data, uri) {
+  try {
+    const imageRef = ref(storage, ${data.gymCode}/clients/${data.uid});
+
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    await uploadBytes(imageRef, blob);
+    const downloadURL = await getDownloadURL(imageRef);
+
+    return downloadURL;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function authUser(data) {
+  try {
+    const q = query(
+      collection(db, "GymsCommonCollection"),
+      where("email", "==", data.email)
+    );
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return 0;
+    }
+
+    if (querySnapshot.size > 1) {
+      throw new Error("Multiple users found");
+    }
+
+    if (querySnapshot.docs[0].data().status !== "Active") {
+      throw new Error("Not able to sign in");
+    }
+
+    return {
+      uid: querySnapshot.docs[0].id,
+      jwtToken: querySnapshot.docs[0].data().jwtToken,
+    };
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getGymDetails(client) {
+  try {
+    const result = await getDoc(
+      doc(db, ${client.gymCode}, "gymPersonalInfo")
+    );
+    return result.data();
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function clientDetails(id) {
+  try {
+    const response = await getDoc(doc(db, "GymsCommonCollection", id));
+    const result = await getAllClientDetials(response.data(), id);
+    return result;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getAllClientDetials(response, id) {
+  try {
+    const result = await getDoc(
+      doc(db, ${response.gymCode}, "clients", "clients", ${id})
+    );
+    return { ...result.data(), ...response };
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function updateClientData(data) {
+  try {
+    if (data.details?.image && !data.details.image.startsWith("http")) {
+      const imageUrl = await uploadImage(data, data.details.image);
+      data = {
+        ...data,
+        details: {
+          ...data.details,
+          image: imageUrl,
+        },
+      };
+    }
+    await setDoc(
+      doc(db, ${data.gymCode}, "clients", "clients", ${data.uid}),
+      data,
+      { merge: true }
+    );
+    return 1;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function updateClientProgress(data, formData) {
+  try {
+    const docRef = doc(
+      db,
+      ${data.gymCode},
+      "Monthly-Progress",
+      "client",
+      ${data.uid}
+    );
+    const docSnap = await getDoc(docRef);
+
+    const existingData = docSnap.exists() ? docSnap.data() : {};
+    if (!existingData[currentYear]) {
+      existingData[currentYear] = {};
+    }
+    if (!existingData[currentYear][currentMonthName]) {
+      existingData[currentYear][currentMonthName] = {};
+    }
+
+    const cleanedFormData = Object.fromEntries(
+      Object.entries(formData).filter(
+        ([key, value]) => value !== undefined && value !== ""
+      )
+    );
+
+    existingData[currentYear][currentMonthName] = cleanedFormData;
+
+    const sortedData = Object.keys(existingData)
+      .sort((a, b) => b - a)
+      .reduce((acc, year) => {
+        acc[year] = Object.keys(existingData[year])
+          .sort((a, b) => months.indexOf(a) - months.indexOf(b))
+          .reduce((obj, month) => {
+            obj[month] = existingData[year][month];
+            return obj;
+          }, {});
+        return acc;
+      }, {});
+
+    await setDoc(docRef, sortedData, { merge: true });
+    return 1;
+  } catch (error) {
+    console.error("Error updating client progress:", error);
+    return 0;
+  }
+}
+
+export async function getClientProgessByType(client, userInputMonths, type) {
+  try {
+    const docRef = doc(
+      db,
+      ${client.gymCode},
+      "Monthly-Progress",
+      "client",
+      ${client.uid}
+    );
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("Document not found");
+    }
+
+    const data = docSnap.data();
+    const currentYearData = data[currentYear] || {};
+
+    const lineChartData = userInputMonths.map((month) => {
+      const monthData = currentYearData[month] || {};
+      const value = monthData[type] || 0;
+      return { label: month, value: parseInt(value) };
+    });
+
+    const allMonthsData = months.reduce((acc, month) => {
+      if (!lineChartData.some((item) => item.label === month)) {
+        acc.push({ label: month, value: 0 });
+      }
+      return acc;
+    }, lineChartData);
+
+    return allMonthsData.slice(0, userInputMonths.length);
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getClientProgress(client, userInputMonths) {
+  try {
+    const docRef = doc(
+      db,
+      ${client.gymCode},
+      "Monthly-Progress",
+      "client",
+      ${client.uid}
+    );
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("Document not found");
+    }
+
+    const data = docSnap.data();
+    const currentYearData = data[currentYear] || {};
+
+    const types = [
+      "Bicep",
+      "Chest",
+      "Height",
+      "Hips",
+      "Thighs",
+      "Triceps",
+      "Waist",
+      "Weight",
+    ];
+
+    const chartsData = types.map((type) => {
+      let lineChartData = userInputMonths.map((month) => {
+        const monthData = currentYearData[month] || {};
+        const value = monthData[type] || 0;
+        return {
+          label: month,
+          value: parseInt(value) || 0,
+        };
+      });
+      return {
+        title: type,
+        data: lineChartData,
+      };
+    });
+
+    return chartsData;
+  } catch (error) {
+    console.error("Error fetching client progress:", error);
+    return 0;
+  }
+}
+
+export async function getMonthlyProgressData(client, year, month) {
+  try {
+    const docRef = doc(
+      db,
+      ${client.gymCode},
+      "Monthly-Progress",
+      "client",
+      ${client.uid}
+    );
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const yearData = data[year];
+      if (yearData) {
+        const monthData = yearData[month];
+        if (monthData) {
+          return monthData;
+        } else {
+          alert(No data for month: ${month});
+          return 0;
+        }
+      } else {
+        alert(No data for year: ${year});
+        return 0;
+      }
+    } else {
+      alert("No document found");
+      return 0;
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return 0;
+  }
+}
+
+export async function submitFeedback(data, feedback) {
+  try {
+    const docRef = doc(
+      db,
+      ${data.gymCode},
+      "Feedback",
+      "client",
+      ${data.uid}
+    );
+    const docSnap = await getDoc(docRef);
+    const existingData = docSnap.exists() ? docSnap.data() : { feedbacks: [] };
+
+    const updatedFeedbacks = [feedback, ...existingData.feedbacks];
+    updatedFeedbacks.sort(
+      (a, b) => new Date(b.timeStamp) - new Date(a.timeStamp)
+    );
+
+    await setDoc(docRef, { feedbacks: updatedFeedbacks }, { merge: true });
+    return 1;
+  } catch (error) {
+    alert(error);
+    return 0;
+  }
+}
+
+export async function getFeaturedVideos(data) {
+  try {
+    const arr = await getDocs(
+      collection(db, ${data.gymCode}/featured-content/featured-content)
+    );
+    return arr.docs.map((doc) => ({
+      ...doc.data(),
+    }));
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function getRecommendedPlaylist() {
+  try {
+    const result = await getDoc(
+      doc(db, "GymsCommonCollection", "recommended-playlist")
+    );
+    return result.data().videos;
+  } catch (error) {
+    return 0;
+  }
+}
+
+export async function resetPassword(jwtToken, id) {
+  try {
+    const result = await setDoc(
+      doc(db, "GymsCommonCollection", id),
+      {
+        jwtToken,
+      },
+      { merge: true }
+    );
+    alert(result);
+    if (result) {
+      return 1;
+    }
+  } catch (error) {
+    return 0;
+  }
+}
+
+
+
+
+
+
