@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
+import 'package:gymvita_connect/controllers/userdata_controller.dart';
 import 'package:gymvita_connect/screens/dashboard_card_screens/pay_fee/payfee.dart';
 import 'package:gymvita_connect/screens/nav_screens/payment/payment_screen.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/help_screen.dart';
@@ -18,12 +21,15 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final GymInfoController gymInfoController = Get.find();
   @override
   Widget build(BuildContext context) {
     DateTime dummyDate = DateTime(2024, 9, 24, 17, 22);
     TextTheme theme = Theme.of(context).textTheme;
     String formattedDate = DateFormat('d MMM y').format(dummyDate);
     TextEditingController feedbackTitle = TextEditingController();
+    final UserDataController userController = Get.find();
+    final GymInfoController gymInfoController = Get.find();
     TextEditingController feedbackMessage = TextEditingController();
 
     return SafeArea(
@@ -51,11 +57,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Ayush Chopra",
+                            userController.userDocument.value?['details.name'],
                             style: theme.titleMedium?.copyWith(color: white),
                           ),
                           Text(
-                            '+919868101088',
+                            userController.userDocument.value?['phoneNo'],
+                            // '+919868101088',
                             style: theme.displaySmall?.copyWith(color: white),
                           )
                         ],
@@ -95,7 +102,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 5.h,
                         ),
                         Text(
-                          'Next Due Date : $formattedDate',
+                          'Next Due Date : '+userController.userDocument.value?['nextDueDate'],
+
                           style: theme.displaySmall?.copyWith(
                               color: grey, fontWeight: FontWeight.w400),
                         ),
@@ -136,7 +144,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Gym name',
+                            gymInfoController.gymData.value?['gymName'],
                             style: theme.headlineSmall?.copyWith(color: accent),
                           ),
                           SizedBox(
@@ -153,7 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 width: 10.w,
                               ),
                               Text(
-                                '+919868101088',
+                                gymInfoController.gymData.value?['phoneNo'],
                                 style: theme.displaySmall
                                     ?.copyWith(color: white, fontSize: 10.sp),
                               ),
@@ -173,7 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 width: 10.w,
                               ),
                               Text(
-                                'sample@gmail.com',
+                                gymInfoController.gymData.value?['email'],
                                 style: theme.displaySmall
                                     ?.copyWith(color: white, fontSize: 10.sp),
                               ),
@@ -193,7 +201,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 width: 10.w,
                               ),
                               Text(
-                                'B-66/1 , delhi , East Delhi - 110051',
+                                gymInfoController.gymData.value?['address']['houseNo']+" / "+
+                                gymInfoController.gymData.value?['address']['area']+", "+
+                                gymInfoController.gymData.value?['address']['city']+", "+
+                                gymInfoController.gymData.value?['address']['state']+"-"+
+                                gymInfoController.gymData.value?['address']['pincode'],
+                                // 'B-66/1 , delhi , East Delhi - 110051',
                                 style: theme.displaySmall
                                     ?.copyWith(color: white, fontSize: 10.sp),
                               ),
@@ -229,7 +242,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const Profile()));
+                                  builder: (context) =>  Profile()));
                         }),
                     const Divider(
                       endIndent: 20,

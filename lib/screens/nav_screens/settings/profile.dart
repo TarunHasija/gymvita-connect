@@ -1,31 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gymvita_connect/controllers/userdata_controller.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 
-class Profile extends StatefulWidget {
-  const Profile({super.key});
+class Profile extends StatelessWidget {
+  Profile({super.key});
 
-  @override
-  State<Profile> createState() => _ProfileState();
-}
-
-class _ProfileState extends State<Profile> {
   TextEditingController nameController = TextEditingController();
+
   TextEditingController phoneNoController = TextEditingController();
+
   TextEditingController emailController = TextEditingController();
+
   TextEditingController dobController = TextEditingController();
+
   TextEditingController genderController = TextEditingController();
+
   TextEditingController serviceController = TextEditingController();
+
   TextEditingController fitnessGoalController = TextEditingController();
+
   TextEditingController allergieController = TextEditingController();
+
   TextEditingController injuryController = TextEditingController();
+
   TextEditingController occupationController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final UserDataController userController = Get.find();
     TextTheme theme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
@@ -73,18 +80,17 @@ class _ProfileState extends State<Profile> {
                 SizedBox(
                   height: 50.h,
                 ),
-                
 
                 ProfileTextFieldInput(
                   textEditingController: nameController,
-                  hintText: 'Name',
+                  hintText: userController.userDocument.value?['details.name'],
                 ),
                 SizedBox(
                   height: 20.h,
                 ),
                 ProfileTextFieldInput(
                   textEditingController: phoneNoController,
-                  hintText: 'Phone',
+                  hintText: userController.userDocument.value?['phoneNo'],
                 ),
                 SizedBox(
                   height: 20.h,
@@ -95,13 +101,13 @@ class _ProfileState extends State<Profile> {
                     Expanded(
                       child: ProfileTextFieldInput(
                         textEditingController: emailController,
-                        hintText: 'Email',
+                        hintText: userController.userDocument.value?['email'],
                       ),
                     ),
                     SizedBox(width: 10.w),
-                    Container(
-                      width: 56.h, // Set a fixed width for the button
-                      height: 56.h, // Set a fixed height for the button
+                    SizedBox(
+                      width: 56.h,
+                      height: 56.h,
                       child: InkWell(
                         onTap: () {
                           Navigator.pushReplacement(
@@ -133,7 +139,7 @@ class _ProfileState extends State<Profile> {
 
                 ProfileTextFieldInput(
                   textEditingController: dobController,
-                  hintText: 'Date of Birth',
+                  hintText: userController.userDocument.value?['dob'],
                 ),
                 SizedBox(
                   height: 20.h,
@@ -141,21 +147,27 @@ class _ProfileState extends State<Profile> {
 
                 ProfileTextFieldInput(
                   textEditingController: genderController,
-                  hintText: 'Gender',
+                  hintText: userController.userDocument.value?['gender'],
                 ),
                 SizedBox(
                   height: 20.h,
                 ),
                 ProfileTextFieldInput(
                   textEditingController: serviceController,
-                  hintText: 'Service',
+                  hintText: (userController.userDocument.value?['services']
+                              as List<dynamic>?)
+                          ?.join(', ') ??
+                      'Services',
                 ),
                 SizedBox(
                   height: 20.h,
                 ),
                 ProfileTextFieldInput(
                   textEditingController: fitnessGoalController,
-                  hintText: 'Fitness Goal',
+                  hintText:  (userController.userDocument.value?['fitnessGoals']
+                              as List<dynamic>?)
+                          ?.join(', ') ??
+                      'Fitness Goals',
                 ),
                 SizedBox(
                   height: 20.h,
@@ -174,10 +186,7 @@ class _ProfileState extends State<Profile> {
                 SizedBox(
                   height: 20.h,
                 ),
-                ProfileTextFieldInput(
-                  textEditingController: occupationController,
-                  hintText: 'Occupation',
-                ),
+
                 SizedBox(
                   height: 20.h,
                 ),

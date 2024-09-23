@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                             }),
                             Obx(() => Text(
                                   userDataController.userDocument
-                                      .value?['services'][0]['name'],
+                                      .value?['services'][0],
                                   style: theme.displaySmall
                                       ?.copyWith(color: white),
                                 )),
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Profile()));
+                                builder: (context) =>  Profile()));
                       }),
                     ],
                   ),
