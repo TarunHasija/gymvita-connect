@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -50,21 +41,47 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBlpcmxinTIYcWJXbj8Bfhxn1dtxqdy33A',
-    appId: '1:405944244392:android:45d330bd4467eed9fc0a9d',
-    messagingSenderId: '405944244392',
-    projectId: 'firestore-141df',
-    databaseURL: 'https://firestore-141df-default-rtdb.firebaseio.com',
-    storageBucket: 'firestore-141df.appspot.com',
+    apiKey: 'AIzaSyBW2cbYykGrZEp4d4y3PR6RIM1M8I1mNl8',
+    appId: '1:298864058693:android:fcb0e7faa4cb61a3a95e2c',
+    messagingSenderId: '298864058693',
+    projectId: 'gymvita-connect-88697',
+    storageBucket: 'gymvita-connect-88697.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCupny6v69Ke7Dcxuv_DqnIVVfbX2RjAmE',
-    appId: '1:405944244392:ios:896d4837edf78c66fc0a9d',
-    messagingSenderId: '405944244392',
-    projectId: 'firestore-141df',
-    databaseURL: 'https://firestore-141df-default-rtdb.firebaseio.com',
-    storageBucket: 'firestore-141df.appspot.com',
+    apiKey: 'AIzaSyCJ-UMVhOTqpdj00KSeObYnb2LW6-cj5TE',
+    appId: '1:298864058693:ios:6c181bb6faa4ebada95e2c',
+    messagingSenderId: '298864058693',
+    projectId: 'gymvita-connect-88697',
+    storageBucket: 'gymvita-connect-88697.appspot.com',
     iosBundleId: 'com.example.gymvitaConnect',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDCDJl2Jezd2k3pycVoCZ88tmK6qkMh9ec',
+    appId: '1:298864058693:web:d5e37e6f2387c812a95e2c',
+    messagingSenderId: '298864058693',
+    projectId: 'gymvita-connect-88697',
+    authDomain: 'gymvita-connect-88697.firebaseapp.com',
+    storageBucket: 'gymvita-connect-88697.appspot.com',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCJ-UMVhOTqpdj00KSeObYnb2LW6-cj5TE',
+    appId: '1:298864058693:ios:6c181bb6faa4ebada95e2c',
+    messagingSenderId: '298864058693',
+    projectId: 'gymvita-connect-88697',
+    storageBucket: 'gymvita-connect-88697.appspot.com',
+    iosBundleId: 'com.example.gymvitaConnect',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDCDJl2Jezd2k3pycVoCZ88tmK6qkMh9ec',
+    appId: '1:298864058693:web:8e2a5fc2a4cc79e9a95e2c',
+    messagingSenderId: '298864058693',
+    projectId: 'gymvita-connect-88697',
+    authDomain: 'gymvita-connect-88697.firebaseapp.com',
+    storageBucket: 'gymvita-connect-88697.appspot.com',
+  );
+
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
 import 'package:gymvita_connect/controllers/userdata_controller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
@@ -37,19 +38,10 @@ class _NavbarScreenState extends State<NavbarScreen> {
     final NutritionPlanController nutritionplanController = Get.find();
     final UserDataController userController = Get.find();
     final WorkoutPlanController workoutPlan = Get.find();
+    final GymInfoController gymInfoController = Get.find();
     return Scaffold(
       floatingActionButton: FloatingActionButton(onPressed: () {
-        // userController.fetchUserDataIfReady();
-        // print(
-        //   userController.usergymCode.value,
-        // );
-        // print(
-        //   userController.userUid.value,
-        workoutPlan.fetchWorkoutPlan();
-        // );
-        // print(userController.userDocument.value?.data());
-
-        nutritionplanController.fetchNutritionPlan();
+        print(gymInfoController.gymData);
       }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

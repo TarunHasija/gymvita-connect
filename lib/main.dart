@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
+import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
 import 'package:gymvita_connect/controllers/userdata_controller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
@@ -19,6 +20,7 @@ void main() async {
   Get.put(NutritionPlanController());
   Get.put(UserDataController());
   Get.put(WorkoutPlanController());
+  Get.put(GymInfoController());
   runApp(const MyApp());
 }
 

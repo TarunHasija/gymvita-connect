@@ -1,14 +1,13 @@
 {
   "project_info": {
-    "project_number": "405944244392",
-    "firebase_url": "https://firestore-141df-default-rtdb.firebaseio.com",
-    "project_id": "firestore-141df",
-    "storage_bucket": "firestore-141df.appspot.com"
+    "project_number": "298864058693",
+    "project_id": "gymvita-connect-88697",
+    "storage_bucket": "gymvita-connect-88697.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:405944244392:android:45d330bd4467eed9fc0a9d",
+        "mobilesdk_app_id": "1:298864058693:android:fcb0e7faa4cb61a3a95e2c",
         "android_client_info": {
           "package_name": "com.example.gymvita_connect"
         }
@@ -16,45 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBlpcmxinTIYcWJXbj8Bfhxn1dtxqdy33A"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:405944244392:android:4e1e3c6be7e8d181fc0a9d",
-        "android_client_info": {
-          "package_name": "com.harsh.gymvita_connect"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBlpcmxinTIYcWJXbj8Bfhxn1dtxqdy33A"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:405944244392:android:79e8df678876bde0fc0a9d",
-        "android_client_info": {
-          "package_name": "com.harshverma.gymvita_connect"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBlpcmxinTIYcWJXbj8Bfhxn1dtxqdy33A"
+          "current_key": "AIzaSyBW2cbYykGrZEp4d4y3PR6RIM1M8I1mNl8"
         }
       ],
       "services": {

@@ -9,7 +9,7 @@ class UserDataController extends GetxController {
   final email = ''.obs;
 
   final userDocument = Rx<DocumentSnapshot?>(null); 
-  // current user data
+  //!userdata snapshot
   
   final authController = Get.find<AuthController>();
 

@@ -34,12 +34,12 @@ class _WorkOutPlanPageState extends State<WorkOutPlanPage> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
 
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No workout plans available.'));
+              return const Center(child: Text('No workout plans available rightnow'));
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
             }
 
             var details = snapshot.data!;
