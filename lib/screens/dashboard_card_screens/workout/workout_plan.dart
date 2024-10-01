@@ -33,8 +33,6 @@ class _WorkOutPlanPageState extends State<WorkOutPlanPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
-
-
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(child: Text('No workout plans available rightnow'));
             }

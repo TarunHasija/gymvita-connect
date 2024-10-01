@@ -71,11 +71,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         width: 15.w,
                       ),
                       CircleAvatar(
-                        radius: 35.r,
-                        child: Image.asset(
-                          'assets/images/loginlogo.png',
-                          fit: BoxFit.cover,
-                        ),
+                        radius: 20.r,
+                        backgroundImage: userController
+                                    .userDocument.value?['details.image'] ==
+                                null
+                            ? const AssetImage(
+                                'assets/images/default_profile.png') // Make sure the asset path is correct
+                            : NetworkImage(userController.userDocument.value![
+                                'details.image']), // Use '!' to assert non-null
                       ),
                     ],
                   ),
@@ -102,8 +105,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 5.h,
                         ),
                         Text(
-                          'Next Due Date : '+userController.userDocument.value?['nextDueDate'],
-
+                          'Next Due Date : ' +
+                              userController.userDocument.value?['dueDate'],
                           style: theme.displaySmall?.copyWith(
                               color: grey, fontWeight: FontWeight.w400),
                         ),
@@ -201,11 +204,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 width: 10.w,
                               ),
                               Text(
-                                gymInfoController.gymData.value?['address']['houseNo']+" / "+
-                                gymInfoController.gymData.value?['address']['area']+", "+
-                                gymInfoController.gymData.value?['address']['city']+", "+
-                                gymInfoController.gymData.value?['address']['state']+"-"+
-                                gymInfoController.gymData.value?['address']['pincode'],
+                                gymInfoController.gymData.value?['address']
+                                        ['houseNo'] +
+                                    " / " +
+                                    gymInfoController.gymData.value?['address']
+                                        ['area'] +
+                                    ", " +
+                                    gymInfoController.gymData.value?['address']
+                                        ['city'] +
+                                    ", " +
+                                    gymInfoController.gymData.value?['address']
+                                        ['state'] +
+                                    "-" +
+                                    gymInfoController.gymData.value?['address']
+                                        ['pincode'],
                                 // 'B-66/1 , delhi , East Delhi - 110051',
                                 style: theme.displaySmall
                                     ?.copyWith(color: white, fontSize: 10.sp),
@@ -242,7 +254,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>  Profile()));
+                                  builder: (context) => Profile()));
                         }),
                     const Divider(
                       endIndent: 20,

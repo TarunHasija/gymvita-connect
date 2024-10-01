@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
+import 'package:gymvita_connect/utils/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -76,7 +77,20 @@ class AuthController extends GetxController {
         print('Received token from server: $tokenFromServer');
 
         final result = await authUser(email);
-        if (result != null && result['jwtToken'] == tokenFromServer) {
+        if (result == null) {
+          // User doesn't exist
+          print('User does not exist');
+          _showAlertDialog(context, "User does not exist");
+        } else if (result['jwtToken'] != tokenFromServer) {
+          // Invalid credentials
+          print('Invalid credentials');
+          _showAlertDialog(context, "Invalid credentials");
+        } else if (result['status'] != 'Active') {
+          // Status inactive
+          print('Account is inactive');
+          _showAlertDialog(context, "Account is inactive");
+        } else {
+          // Valid credentials and active status
           print('Token validation successful');
           storedUid.value = result['uid'];
           storedGymCode.value = result['gymCode'];
@@ -93,9 +107,6 @@ class AuthController extends GetxController {
 
           // Store user details for next session
           await _storeUserDetails(email, password);
-
-        } else {
-          _showAlertDialog(context, "Invalid credentials");
         }
       } else {
         print('Login request failed with status: ${response.statusCode}');
@@ -109,71 +120,69 @@ class AuthController extends GetxController {
       print('Login process completed');
     }
   }
-
-  // Other methods remain unchanged...
-
 }
 
-  Future<Map<String, dynamic>?> authUser(String email) async {
-    print('Fetching user data for email: $email');
-    try {
-      CollectionReference gymsCollection =
-          FirebaseFirestore.instance.collection('GymsCommonCollection');
+Future<Map<String, dynamic>?> authUser(String email) async {
+  print('Fetching user data for email: $email');
+  try {
+    print("-------------Testing-------------------");
+    CollectionReference gymsCollection =
+        FirebaseFirestore.instance.collection('GymsCommonCollection');
 
-      QuerySnapshot querySnapshot =
-          await gymsCollection.where('email', isEqualTo: email).get();
+    QuerySnapshot querySnapshot =
+        await gymsCollection.where('email', isEqualTo: email).get();
 
-      if (querySnapshot.docs.isEmpty) {
-        print('No user found for email: $email');
-        return null;
-      }
-
-      var userDoc = querySnapshot.docs.first;
-      if (userDoc['status'] != 'Active') {
-        throw Exception("Not able to sign in");
-      }
-
-      print(
-          'User data fetched: ${userDoc.id}, ${userDoc['gymCode']}, ${userDoc['jwtToken']}');
-      return {
-        'uid': userDoc.id,
-        'gymCode': userDoc['gymCode'],
-        'jwtToken': userDoc['jwtToken'],
-      };
-    } catch (error) {
-      print('Error fetching user data: ${error.toString()}');
+    if (querySnapshot.docs.isEmpty) {
+      print('No user found for email: $email');
       return null;
     }
-  }
 
-  Future<dynamic> clientDetails(String uid) async {
-    print('Fetching client details for uid: $uid');
-    await Future.delayed(const Duration(seconds: 1));
-    return {};
-  }
+    var userDoc = querySnapshot.docs.first;
 
-  void updateClient(dynamic response) {
-    print('Updating client with response: $response');
-    // Implement the client update logic here
-  }
 
-  void _showAlertDialog(BuildContext context, String message) {
-    print('Showing alert dialog with message: $message');
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    print(
+        'User data fetched: ${userDoc.id}, ${userDoc['gymCode']}, ${userDoc['jwtToken']}');
+    return {
+      'status':userDoc['status'],
+      'uid': userDoc.id,
+      'gymCode': userDoc['gymCode'],
+      'jwtToken': userDoc['jwtToken'],
+    };
+  } catch (error) {
+    print('Error fetching user data: ${error.toString()}');
+    return null;
   }
+}
+
+Future<dynamic> clientDetails(String uid) async {
+  print('Fetching client details for uid: $uid');
+  await Future.delayed(const Duration(seconds: 1));
+  return {};
+}
+
+void updateClient(dynamic response) {
+  print('Updating client with response: $response');
+  // Implement the client update logic here
+}
+
+void _showAlertDialog(BuildContext context, String message) {
+  print('Showing alert dialog with message: $message');
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            
+            child: const Text('OK',style: TextStyle(color: white),),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
