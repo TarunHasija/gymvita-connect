@@ -36,6 +36,7 @@ class Profile extends StatelessWidget {
     TextTheme theme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);
@@ -49,175 +50,242 @@ class Profile extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Center(
-            child: Column(
-              children: [
-                //! Profile Image
+      body: RefreshIndicator(
+        backgroundColor: white,
+        color: primary,
+        onRefresh: () async {
+          Future.delayed(const Duration(seconds: 2));
+        },
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Center(
+              child: Column(
+                children: [
+                  //! Profile Image
 
-                Stack(
-                  children: [
-                    const CircleAvatar(
-                      radius: 48,
-                      backgroundImage: NetworkImage(
-                          'https://plus.unsplash.com/premium_photo-1664536392896-cd1743f9c02c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cGVyc29ufGVufDB8fDB8fHww'),
-                    ),
-                    Positioned(
-                        bottom: -10,
-                        left: 60,
-                        child: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.add_a_photo,
-                              color: Colors.white,
-                            )))
-                  ],
-                ),
-
-                //! Input fields
-                SizedBox(
-                  height: 50.h,
-                ),
-
-                ProfileTextFieldInput(
-                  textEditingController: nameController,
-                  hintText: userController.userDocument.value?['details.name'],
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ProfileTextFieldInput(
-                  textEditingController: phoneNoController,
-                  hintText: userController.userDocument.value?['phoneNo'],
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ProfileTextFieldInput(
-                        textEditingController: emailController,
-                        hintText: userController.userDocument.value?['email'],
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.r,
+                        backgroundImage: (userController
+                                        .userDocument.value?['details.image'] ??
+                                    "")
+                                .isEmpty
+                            ? const AssetImage(
+                                'assets/images/default_profile.png') // Default image if no image is found
+                            : NetworkImage(userController.userDocument.value![
+                                'details.image']), // Image from Firebase
                       ),
-                    ),
-                    SizedBox(width: 10.w),
-                    SizedBox(
-                      width: 56.h,
-                      height: 56.h,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NavbarScreen(),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: secondary,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            size: 28.h,
+                      Positioned(
+                        bottom: -10.h,
+                        left: 50.h,
+                        child: IconButton(
+                          onPressed: () {
+                            // Implement functionality for adding a photo here
+                          },
+                          icon: const Icon(
+                            Icons.add_a_photo,
                             color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
+                    ],
+                  ),
 
-                ProfileTextFieldInput(
-                  textEditingController: dobController,
-                  hintText: userController.userDocument.value?['dob'],
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
+                  //! Input fields
+                  SizedBox(
+                    height: 50.h,
+                  ),
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Name',
+                  ),
 
-                ProfileTextFieldInput(
-                  textEditingController: genderController,
-                  hintText: userController.userDocument.value?['gender'],
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ProfileTextFieldInput(
-                  textEditingController: serviceController,
-                  hintText: (userController.userDocument.value?['services']
-                              as List<dynamic>?)
-                          ?.join(', ') ??
-                      'Services',
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ProfileTextFieldInput(
-                  textEditingController: fitnessGoalController,
-                  hintText:  (userController.userDocument.value?['fitnessGoals']
-                              as List<dynamic>?)
-                          ?.join(', ') ??
-                      'Fitness Goals',
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ProfileTextFieldInput(
-                  textEditingController: allergieController,
-                  hintText: 'Allergies',
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ProfileTextFieldInput(
-                  textEditingController: injuryController,
-                  hintText: 'Injuries',
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
+                  ProfileTextFieldInput(
+                    readonly: true,
+                    textEditingController: nameController,
+                    hintText:
+                        userController.userDocument.value?['details.name'],
+                    onComplete: () {},
+                  ),
 
-                SizedBox(
-                  height: 20.h,
-                ),
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Phone number',
+                  ),
+                  ProfileTextFieldInput(
+                    readonly: true,
+                    textEditingController: phoneNoController,
+                    hintText: userController.userDocument.value?['phoneNo'],
+                    onComplete: () {},
+                  ),
 
-                SizedBox(
-                  height: 55.h,
-                  width: double.infinity,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: accent,
-                      padding: EdgeInsets.symmetric(vertical: 15.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Email',
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: ProfileTextFieldInput(
+                          textEditingController: emailController,
+                          hintText: userController.userDocument.value?['email'],
+                          onComplete: () {},
+                        ),
                       ),
-                    ),
-                    onPressed: () {},
-                    child: Text(
-                      "Save",
-                      style: TextStyle(
-                        color: black,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                      SizedBox(width: 10.w),
+                      SizedBox(
+                        width: 56.h,
+                        height: 56.h,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NavbarScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: secondary,
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              size: 28.h,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Date of birth',
+                  ),
+                  ProfileTextFieldInput(
+                    textEditingController: dobController,
+                    hintText: userController.userDocument.value?['dob'],
+                    onComplete: () {},
+                  ),
+
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Gender',
+                  ),
+                  ProfileTextFieldInput(
+                    textEditingController: genderController,
+                    hintText: userController.userDocument.value?['gender'],
+                    onComplete: () {},
+                  ),
+
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Services',
+                  ),
+                  ProfileTextFieldInput(
+                    textEditingController: serviceController,
+                    hintText: (userController.userDocument.value?['services']
+                                as List<dynamic>?)
+                            ?.join(', ') ??
+                        'Services',
+                    onComplete: () {},
+                  ),
+
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Fitness Goals',
+                  ),
+                  ProfileTextFieldInput(
+                    textEditingController: fitnessGoalController,
+                    hintText: (userController.userDocument
+                                .value?['fitnessGoals'] as List<dynamic>?)
+                            ?.join(', ') ??
+                        'Fitness Goals',
+                    onComplete: () {},
+                  ),
+
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Allergies',
+                  ),
+                  ProfileTextFieldInput(
+                    textEditingController: allergieController,
+                    hintText: 'Allergies ',
+                    onComplete: () {},
+                  ),
+
+                  TextfieldHeading(
+                    theme: theme,
+                    title: 'Injuries',
+                  ),
+                  ProfileTextFieldInput(
+                    textEditingController: injuryController,
+                    hintText: 'Injuries',
+                    onComplete: () {},
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+
+                  SizedBox(
+                    height: 55.h,
+                    width: double.infinity,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: accent,
+                        padding: EdgeInsets.symmetric(vertical: 15.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        "Save",
+                        style: TextStyle(
+                          color: black,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class TextfieldHeading extends StatelessWidget {
+  final String title;
+  const TextfieldHeading({
+    super.key,
+    required this.theme,
+    required this.title,
+  });
+
+  final TextTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        alignment: Alignment.centerLeft,
+        margin: EdgeInsets.only(bottom: 8.h, left: 8.w, top: 20.h),
+        child: Text(
+          title,
+          style: theme.labelMedium
+              ?.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w300),
+        ));
   }
 }
