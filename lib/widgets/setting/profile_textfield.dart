@@ -7,16 +7,18 @@ import 'package:gymvita_connect/utils/colors.dart';
 class ProfileTextFieldInput extends StatelessWidget {
   final TextEditingController textEditingController;
   final String hintText;
-  final bool ?readonly;
+  final bool? readonly;
   final VoidCallback onComplete;
+  final FormFieldValidator<String>? validator;
 
   const ProfileTextFieldInput({
-    Key? key,
+    super.key,
     required this.textEditingController,
     required this.hintText,
-    this.readonly=false,
+    this.readonly = false,
     required this.onComplete,
-  }) : super(key: key);
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +27,10 @@ class ProfileTextFieldInput extends StatelessWidget {
       height: 56.h,
       child: TextFormField(
         readOnly: readonly!,
-        onFieldSubmitted: (value) {},
+        onFieldSubmitted: (value) => onComplete(),
         controller: textEditingController,
         cursorColor: white,
+        validator: validator,
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.r),
@@ -44,8 +47,6 @@ class ProfileTextFieldInput extends StatelessWidget {
           hintText: hintText,
           hintStyle: theme.labelLarge
               ?.copyWith(color: Color.fromARGB(255, 179, 179, 179)),
-          // Optional: Add internal padding to the input field
-          // contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
         ),
       ),
     );

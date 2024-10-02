@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:gymvita_connect/controllers/userdata_controller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
 import 'package:gymvita_connect/screens/dashboard_card_screens/workout/exercise_page.dart';
 import 'package:gymvita_connect/utils/navigation.dart';
@@ -18,9 +17,7 @@ class WorkOutPlanPage extends StatefulWidget {
 class _WorkOutPlanPageState extends State<WorkOutPlanPage> {
   @override
   Widget build(BuildContext context) {
-    TextTheme theme = Theme.of(context).textTheme;
 
-    final UserDataController userDataController = Get.find<UserDataController>();
     final WorkoutPlanController workoutPlanController = Get.find<WorkoutPlanController>();
 
     return Scaffold(

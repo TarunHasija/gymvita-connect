@@ -11,7 +11,6 @@ import 'package:gymvita_connect/widgets/general/custom_bottom_sheet.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/profile.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/setting/setting_card.dart';
-import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -24,9 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final GymInfoController gymInfoController = Get.find();
   @override
   Widget build(BuildContext context) {
-    DateTime dummyDate = DateTime(2024, 9, 24, 17, 22);
     TextTheme theme = Theme.of(context).textTheme;
-    String formattedDate = DateFormat('d MMM y').format(dummyDate);
     TextEditingController feedbackTitle = TextEditingController();
     final UserDataController userController = Get.find();
     final GymInfoController gymInfoController = Get.find();
@@ -72,13 +69,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       CircleAvatar(
                         radius: 20.r,
-                        backgroundImage: userController
-                                    .userDocument.value?['details.image'] ==
-                                null
+                        backgroundImage: (userController
+                                        .userDocument.value?['details.image'] ==
+                                    null ||
+                                userController
+                                        .userDocument.value!['details.image'] ==
+                                    "")
                             ? const AssetImage(
-                                'assets/images/default_profile.png') // Make sure the asset path is correct
-                            : NetworkImage(userController.userDocument.value![
-                                'details.image']), // Use '!' to assert non-null
+                                'assets/images/defaultprofile.png') // Make sure the asset path is correct
+                            : NetworkImage(userController.userDocument
+                                .value!['details.image']) as ImageProvider,
                       ),
                     ],
                   ),
@@ -224,16 +224,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ],
                           ),
+                          
                         ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            backgroundImage:
-                                const AssetImage('assets/images/loginlogo.png'),
-                            radius: 35.r,
-                          )
+                            radius:35.r,
+                            backgroundImage: (gymInfoController.gymData.value?['image']==
+                                        null ||
+                                    gymInfoController.gymData.value?['image']==
+                                        "")
+                                ? const AssetImage(
+                                    'assets/images/uploadavatarpng.png.png') // Make sure the asset path is correct
+                                : NetworkImage( gymInfoController.gymData.value?['image']) as ImageProvider,
+                          ),
                         ],
                       )
                     ],
