@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
-import 'package:gymvita_connect/screens/dashboard_card_screens/workout/exercise_page.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/workout/exercise_page.dart';
 import 'package:gymvita_connect/utils/navigation.dart';
 import 'package:gymvita_connect/widgets/appbar.dart';
 import 'package:gymvita_connect/widgets/home/dashboard/workout_plan_tile.dart';

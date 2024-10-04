@@ -53,6 +53,8 @@ dependencies:
   razorpay_flutter: 
   fluttertoast: ^8.2.8
   get_storage: ^2.1.1
+  email_auth: ^2.0.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

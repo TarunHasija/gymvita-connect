@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gymvita_connect/screens/dashboard_card_screens/pay_fee/payment_details.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/pay_fee/payment_details.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/payment/pay_amount_tile.dart';

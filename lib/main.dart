@@ -6,7 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
-import 'package:gymvita_connect/controllers/userdata_controller.dart';
+import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
 import 'package:gymvita_connect/firebase_options.dart';
 import 'package:gymvita_connect/screens/onboarding%20screens/splash_screen.dart';
@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            primarySwatch: Colors.grey,
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
                 backgroundColor: primary,
                 elevation: 1,

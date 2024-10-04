@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gymvita_connect/screens/dashboard_card_screens/pay_fee/payfee.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/pay_fee/payfee.dart';
 
 class PaymentDetails extends StatelessWidget {
   final int selectedValue;

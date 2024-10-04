@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
-import 'package:gymvita_connect/controllers/userdata_controller.dart';
+import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/text_field.dart';
 

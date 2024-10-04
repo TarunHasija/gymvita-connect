@@ -1,14 +1,12 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:gymvita_connect/utils/colors.dart';
 
 class ProfileTextFieldInput extends StatelessWidget {
   final TextEditingController textEditingController;
   final String hintText;
   final bool? readonly;
-  final VoidCallback onComplete;
   final FormFieldValidator<String>? validator;
 
   const ProfileTextFieldInput({
@@ -16,7 +14,6 @@ class ProfileTextFieldInput extends StatelessWidget {
     required this.textEditingController,
     required this.hintText,
     this.readonly = false,
-    required this.onComplete,
     this.validator,
   });
 
@@ -27,8 +24,9 @@ class ProfileTextFieldInput extends StatelessWidget {
       height: 56.h,
       child: TextFormField(
         readOnly: readonly!,
-        onFieldSubmitted: (value) => onComplete(),
         controller: textEditingController,
+        style: theme.bodyMedium?.copyWith(
+            fontSize: 14.sp, color: const Color.fromARGB(255, 184, 184, 184)),
         cursorColor: white,
         validator: validator,
         decoration: InputDecoration(

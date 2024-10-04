@@ -42,7 +42,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
         backgroundColor: primary,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_filled),
             label: 'Home',
           ),
           BottomNavigationBarItem(

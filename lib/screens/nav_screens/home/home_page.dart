@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:gymvita_connect/controllers/userdata_controller.dart';
+import 'package:gymvita_connect/controllers/usercontroller.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/analysis_form.dart';
 import 'package:gymvita_connect/widgets/general/custom_bottom_sheet.dart';
-import 'package:gymvita_connect/screens/dashboard_card_screens/nutrition_plan/nutrition_plan.dart';
-import 'package:gymvita_connect/screens/dashboard_card_screens/pay_fee/payfee.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/nutrition_plan/nutrition_plan.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/pay_fee/payfee.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/profile.dart';
-import 'package:gymvita_connect/screens/dashboard_card_screens/workout/workout_plan.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/workout/workout_plan.dart';
 import 'package:gymvita_connect/screens/nav_screens/analysis/analysis_screen.dart';
 import 'package:gymvita_connect/screens/notification_screen.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
@@ -67,8 +68,8 @@ class _HomePageState extends State<HomePage> {
                               );
                             }),
                             Obx(() => Text(
-                                  userDataController.userDocument
-                                      .value?['services'][0],
+                                  userDataController
+                                      .userDocument.value?['services'][0],
                                   style: theme.displaySmall
                                       ?.copyWith(color: white),
                                 )),
@@ -162,10 +163,8 @@ class _HomePageState extends State<HomePage> {
                       }),
                       dashBoardCard('Profile', theme, MaterialSymbols.person,
                           () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>  Profile()));
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Profile()));
                       }),
                     ],
                   ),
@@ -176,7 +175,9 @@ class _HomePageState extends State<HomePage> {
 
                 // Update your Monthly Progress button
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Get.to(() => AnalysisForm());
+                  },
                   child: Container(
                     padding: EdgeInsets.all(8.h),
                     decoration: BoxDecoration(
