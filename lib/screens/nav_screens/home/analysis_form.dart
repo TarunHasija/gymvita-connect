@@ -74,90 +74,42 @@ class _AnalysisFormState extends State<AnalysisForm> {
               AnalysisField(
                 hintText: 'Weight (Required)',
                 controller: weightController,
-                selectedUnit: weightUnit,
-                options: ['Kg', 'Pound'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    weightUnit = newValue!;
-                  });
-                },
+                selectedUnit: 'Kg', 
               ),
               AnalysisField(
                 hintText: 'Height (Required)',
-                controller: heightController,
-                selectedUnit: heightUnit,
-                options: ['Inches', 'Cm'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    heightUnit = newValue!;
-                  });
-                },
+                controller: weightController,
+                selectedUnit: 'Kg', 
               ),
               AnalysisField(
                 hintText: 'Bicep (Required)',
-                controller: bicepController,
-                selectedUnit: bicepUnit,
-                options: ['Inches', 'Cm'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    bicepUnit = newValue!;
-                  });
-                },
+                controller: weightController,
+                selectedUnit: 'Kg', 
               ),
               AnalysisField(
-                hintText: 'Hips (Required)',
-                controller: hipsController,
-                selectedUnit: hipsUnit,
-                options: ['Inches', 'Cm'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    hipsUnit = newValue!;
-                  });
-                },
+                hintText: 'Hip (Required)',
+                controller: weightController,
+                selectedUnit: 'Kg', 
               ),
               AnalysisField(
-                hintText: 'Thighs (Required)',
-                controller: thighsController,
-                selectedUnit: thighsUnit,
-                options: ['Inches', 'Cm'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    thighsUnit = newValue!;
-                  });
-                },
+                hintText: 'Thigh (Required)',
+                controller: weightController,
+                selectedUnit: 'Kg', 
               ),
               AnalysisField(
                 hintText: 'Waist (Required)',
-                controller: waistController,
-                selectedUnit: waistUnit,
-                options: ['Inches', 'Cm'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    waistUnit = newValue!;
-                  });
-                },
+                controller: weightController,
+                selectedUnit: 'Kg', 
               ),
               AnalysisField(
                 hintText: 'Chest (Required)',
-                controller: chestController,
-                selectedUnit: chestUnit,
-                options: ['Inches', 'Cm'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    chestUnit = newValue!;
-                  });
-                },
+                controller: weightController,
+                selectedUnit: 'Kg', 
               ),
               AnalysisField(
                 hintText: 'Tricep (Required)',
-                controller: tricepController,
-                selectedUnit: tricepUnit,
-                options: ['Inches', 'Cm'],
-                onChanged: (String? newValue) {
-                  setState(() {
-                    tricepUnit = newValue!;
-                  });
-                },
+                controller: weightController,
+                selectedUnit: 'Kg',
               ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
@@ -190,16 +142,13 @@ class _AnalysisFormState extends State<AnalysisForm> {
 class AnalysisField extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
-  final String selectedUnit;
-  final List<String> options;
-  final ValueChanged<String?> onChanged;
-  const AnalysisField(
-      {super.key,
-      required this.hintText,
-      required this.controller,
-      required this.selectedUnit,
-      required this.options,
-      required this.onChanged});
+  final String selectedUnit; 
+  const AnalysisField({
+    super.key,
+    required this.hintText,
+    required this.controller,
+    required this.selectedUnit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -216,7 +165,8 @@ class AnalysisField extends StatelessWidget {
               height: 80.h,
               child: TextFormField(
                 controller: controller,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                 ],
@@ -258,26 +208,18 @@ class AnalysisField extends StatelessWidget {
           ),
           SizedBox(width: 8.w),
           Container(
-            // alignment: Alignment.topCenter,
-            padding: EdgeInsets.only(left: 8.w),
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
             decoration: BoxDecoration(
               border: Border.all(color: secondary),
               color: primary,
               borderRadius: BorderRadius.circular(10.r),
             ),
-            child: DropdownButton<String>(
-              value: selectedUnit,
-              items: options.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: onChanged,
-              style: theme.labelLarge
-                  ?.copyWith(color: const Color.fromARGB(255, 179, 179, 179)),
-              dropdownColor: primary, 
-              underline: Container(), 
+            child: Text(
+              selectedUnit, 
+              style: theme.labelLarge?.copyWith(
+                color: const Color.fromARGB(255, 179, 179, 179),
+              ),
             ),
           ),
         ],

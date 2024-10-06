@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
+import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
 import 'package:gymvita_connect/firebase_options.dart';
@@ -23,6 +24,7 @@ void main() async {
   Get.put(UserDataController());
   Get.put(WorkoutPlanController());
   Get.put(GymInfoController());
+  Get.put(ProfileController());
   runApp(const MyApp());
 }
 

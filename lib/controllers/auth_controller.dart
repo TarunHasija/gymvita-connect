@@ -78,11 +78,9 @@ class AuthController extends GetxController {
 
         final result = await authUser(email);
         if (result == null) {
-          // User doesn't exist
           print('User does not exist');
           _showAlertDialog(context, "User does not exist");
         } else if (result['jwtToken'] != tokenFromServer) {
-          // Invalid credentials
           print('Invalid credentials');
           _showAlertDialog(context, "Invalid credentials");
         } else if (result['status'] != 'Active') {
@@ -90,7 +88,6 @@ class AuthController extends GetxController {
           print('Account is inactive');
           _showAlertDialog(context, "Account is inactive");
         } else {
-          // Valid credentials and active status
           print('Token validation successful');
           storedUid.value = result['uid'];
           storedGymCode.value = result['gymCode'];
@@ -102,10 +99,9 @@ class AuthController extends GetxController {
           }
           updateClient(clientResponse);
           print('Navigating to NavbarScreen');
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const NavbarScreen()));
+          Get.offAll(() => NavbarScreen());
+          // Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const NavbarScreen()));
 
-          // Store user details for next session
           await _storeUserDetails(email, password);
         }
       } else {
@@ -139,11 +135,10 @@ Future<Map<String, dynamic>?> authUser(String email) async {
 
     var userDoc = querySnapshot.docs.first;
 
-
     print(
         'User data fetched: ${userDoc.id}, ${userDoc['gymCode']}, ${userDoc['jwtToken']}');
     return {
-      'status':userDoc['status'],
+      'status': userDoc['status'],
       'uid': userDoc.id,
       'gymCode': userDoc['gymCode'],
       'jwtToken': userDoc['jwtToken'],
@@ -162,7 +157,6 @@ Future<dynamic> clientDetails(String uid) async {
 
 void updateClient(dynamic response) {
   print('Updating client with response: $response');
-  // Implement the client update logic here
 }
 
 void _showAlertDialog(BuildContext context, String message) {
@@ -175,8 +169,10 @@ void _showAlertDialog(BuildContext context, String message) {
         content: Text(message),
         actions: <Widget>[
           TextButton(
-            
-            child: const Text('OK',style: TextStyle(color: white),),
+            child: const Text(
+              'OK',
+              style: TextStyle(color: white),
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             },
