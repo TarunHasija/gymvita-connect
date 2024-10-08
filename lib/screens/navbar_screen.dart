@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
+import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/analysis/analysis_screen.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/home_page.dart';
 import 'package:gymvita_connect/screens/nav_screens/payment/payment_screen.dart';
@@ -32,10 +33,13 @@ class _NavbarScreenState extends State<NavbarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final UserDataController userController = Get.find();
     final GymInfoController gymInfoController = Get.find();
     return Scaffold(
       floatingActionButton: FloatingActionButton(onPressed: () {
         print(gymInfoController.gymData);
+        print("user Document ${userController.userDoc}");
+        print("user snapshot ${userController.userDocument.value}");
       }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

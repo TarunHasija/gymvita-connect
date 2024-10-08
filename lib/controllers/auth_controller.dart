@@ -91,7 +91,7 @@ class AuthController extends GetxController {
           print('Token validation successful');
           storedUid.value = result['uid'];
           storedGymCode.value = result['gymCode'];
-          print("${storedGymCode.value}-------${storedUid.value}");
+          print(" User Data GYMCODE and USERUID   ${storedGymCode.value}-------${storedUid.value}");
 
           final clientResponse = await clientDetails(result['uid']);
           if (clientResponse == 0) {
@@ -100,7 +100,6 @@ class AuthController extends GetxController {
           updateClient(clientResponse);
           print('Navigating to NavbarScreen');
           Get.offAll(() => NavbarScreen());
-          // Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const NavbarScreen()));
 
           await _storeUserDetails(email, password);
         }

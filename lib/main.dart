@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:gymvita_connect/controllers/analysis_form.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
@@ -25,6 +26,8 @@ void main() async {
   Get.put(WorkoutPlanController());
   Get.put(GymInfoController());
   Get.put(ProfileController());
+  final AuthController authController = Get.find<AuthController>();
+  Get.put(MonthlyAnalysisController(userId: authController.storedUid.value));
   runApp(const MyApp());
 }
 

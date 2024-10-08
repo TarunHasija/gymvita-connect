@@ -7,9 +7,10 @@ class UserDataController extends GetxController {
   final userName = ''.obs;
   final userUid = ''.obs;
   final email = ''.obs;
-  final userDocument = Rx<DocumentSnapshot?>(null); 
+  var userDoc = Rx<DocumentReference?>(null);
+  final userDocument = Rx<DocumentSnapshot?>(null);
   //!userdata snapshot
-  
+
   final authController = Get.find<AuthController>();
 
   @override
@@ -36,6 +37,7 @@ class UserDataController extends GetxController {
         .doc('clients')
         .collection('clients');
     DocumentReference clientDocRef = gymColRef.doc(uid);
+    userDoc.value = clientDocRef;
 
     try {
       DocumentSnapshot docSnapshot = await clientDocRef.get();
@@ -52,55 +54,52 @@ class UserDataController extends GetxController {
     }
   }
 
-Future<void> updateUserData({
-  required String name,
-  required String phoneNo,
-  required String dob,
-  required String gender,
-  required String services,
-  required String fitnessGoals,
-  required String allergies,
-  required String injuries,
-}) async {
-  final uid = authController.storedUid.value;
-  final gymCode = authController.storedGymCode.value;
+  Future<void> updateUserData({
+    required String name,
+    required String phoneNo,
+    required String dob,
+    required String gender,
+    required String services,
+    required String fitnessGoals,
+    required String allergies,
+    required String injuries,
+  }) async {
+    final uid = authController.storedUid.value;
+    final gymCode = authController.storedGymCode.value;
 
-  if (uid.isNotEmpty && gymCode.isNotEmpty) {
-    CollectionReference gymColRef = FirebaseFirestore.instance
-        .collection(gymCode)
-        .doc('clients')
-        .collection('clients');
-    DocumentReference clientDocRef = gymColRef.doc(uid);
+    if (uid.isNotEmpty && gymCode.isNotEmpty) {
+      CollectionReference gymColRef = FirebaseFirestore.instance
+          .collection(gymCode)
+          .doc('clients')
+          .collection('clients');
+      DocumentReference clientDocRef = gymColRef.doc(uid);
 
-    try {
-      // Update Firestore
-      await clientDocRef.update({
-        'details.name': name,
-        'phoneNo': phoneNo,
-        'dob': dob,
-        'gender': gender,
-        'services': services.split(', '), 
-        'fitnessGoals': fitnessGoals.split(', '), 
-        'healthConsiderations': allergies,
-        'medicalCondition': injuries,
-      });
+      try {
+        // Update Firestore
+        await clientDocRef.update({
+          'details.name': name,
+          'phoneNo': phoneNo,
+          'dob': dob,
+          'gender': gender,
+          'services': services.split(', '),
+          'fitnessGoals': fitnessGoals.split(', '),
+          'healthConsiderations': allergies,
+          'medicalCondition': injuries,
+        });
 
-      // Refresh the userDocument in the controller
-      DocumentSnapshot updatedDoc = await clientDocRef.get();
-      userDocument.value = updatedDoc;
+        // Refresh the userDocument in the controller
+        DocumentSnapshot updatedDoc = await clientDocRef.get();
+        userDocument.value = updatedDoc;
 
-      Get.snackbar(
-        'Success',
-        'Profile updated successfully!',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-      );
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to update profile');
+        Get.snackbar(
+          'Success',
+          'Profile updated successfully!',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 2),
+        );
+      } catch (e) {
+        Get.snackbar('Error', 'Failed to update profile');
+      }
     }
   }
-}
-
-
-
 }
