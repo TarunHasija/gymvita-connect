@@ -7,39 +7,39 @@ import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 
-class ProfileController extends GetxController{
-    final FirebaseAuth _auth = FirebaseAuth.instance;
+class ProfileController extends GetxController {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController newEmailController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final RxBool _isOTPSent = false.obs;
 
-
   final UserDataController userController = Get.find<UserDataController>();
-  
-Future<void> sendOTP(String currentEmail) async {
-  ActionCodeSettings actionCodeSettings = ActionCodeSettings(
-    url: 'https://your-app-link.com',
-    handleCodeInApp: true, // This will open the OTP in the app
-    iOSBundleId: 'com.example.ios',
-    androidPackageName: 'com.example.android',
-    androidInstallApp: true,
-    androidMinimumVersion: '12',
-  );
 
-  try {
-    // Send OTP to the current email
-    await _auth.sendSignInLinkToEmail(
-      email: currentEmail,
-      actionCodeSettings: actionCodeSettings,
+  Future<void> sendOTP(String currentEmail) async {
+    ActionCodeSettings actionCodeSettings = ActionCodeSettings(
+      url: 'https://your-app-link.com',
+      handleCodeInApp: true, // This will open the OTP in the app
+      iOSBundleId: 'com.example.ios',
+      androidPackageName: 'com.example.android',
+      androidInstallApp: true,
+      androidMinimumVersion: '12',
     );
-    Get.snackbar('OTP Sent', 'An OTP has been sent to your email');
-    _isOTPSent.value = true;
-  } catch (e) {
-    Get.snackbar('Error', 'Failed to send OTP');
-  }
-}
 
-  void showOTPSheet(BuildContext context, UserDataController userController, String newEmail) {
+    try {
+      // Send OTP to the current email
+      await _auth.sendSignInLinkToEmail(
+        email: currentEmail,
+        actionCodeSettings: actionCodeSettings,
+      );
+      Get.snackbar('OTP Sent', 'An OTP has been sent to your email');
+      _isOTPSent.value = true;
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to send OTP');
+    }
+  }
+
+  void showOTPSheet(BuildContext context, UserDataController userController,
+      String newEmail) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -89,7 +89,8 @@ Future<void> sendOTP(String currentEmail) async {
     );
   }
 
-  Future<void> verifyOTP(UserDataController userController, String newEmail) async {
+  Future<void> verifyOTP(
+      UserDataController userController, String newEmail) async {
     String otp = _otpController.text.trim();
     try {
       // Verify OTP
@@ -108,9 +109,10 @@ Future<void> sendOTP(String currentEmail) async {
     }
   }
 
-  Future<void> updateUserData(UserDataController userController, String newEmail) async {
-    final uid = userController.userDocument.value?['uid'];
-    final gymCode = userController.userDocument.value?['gymCode'];
+  Future<void> updateUserData(
+      UserDataController userController, String newEmail) async {
+    final uid = userController.userDocSnap.value?['uid'];
+    final gymCode = userController.userDocSnap.value?['gymCode'];
 
     if (uid != null && gymCode != null) {
       CollectionReference gymColRef = FirebaseFirestore.instance
@@ -124,15 +126,12 @@ Future<void> sendOTP(String currentEmail) async {
           'email': newEmail,
         });
         DocumentSnapshot updatedDoc = await clientDocRef.get();
-        userController.userDocument.value = updatedDoc;
+        userController.userDocSnap.value = updatedDoc;
       } catch (e) {
         Get.snackbar('Error', 'Failed to update email');
       }
     }
   }
 
-  Future selectFile()async{
-    
-  }
+  Future selectFile() async {}
 }
-

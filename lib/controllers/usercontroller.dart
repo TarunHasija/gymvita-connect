@@ -7,8 +7,8 @@ class UserDataController extends GetxController {
   final userName = ''.obs;
   final userUid = ''.obs;
   final email = ''.obs;
-  var userDoc = Rx<DocumentReference?>(null);
-  final userDocument = Rx<DocumentSnapshot?>(null);
+  var userDocRef = Rx<DocumentReference?>(null);
+  final userDocSnap = Rx<DocumentSnapshot?>(null);
   //!userdata snapshot
 
   final authController = Get.find<AuthController>();
@@ -32,18 +32,18 @@ class UserDataController extends GetxController {
 
   Future<void> getUserData(String uid, String gymCode) async {
     print("$uid----------$gymCode");
-    CollectionReference gymColRef = FirebaseFirestore.instance
+    CollectionReference userCollection = FirebaseFirestore.instance
         .collection(gymCode)
         .doc('clients')
         .collection('clients');
-    DocumentReference clientDocRef = gymColRef.doc(uid);
-    userDoc.value = clientDocRef;
-
+    DocumentReference clientDocRef = userCollection.doc(uid);
+    userDocRef.value = clientDocRef;
+  
     try {
       DocumentSnapshot docSnapshot = await clientDocRef.get();
       if (docSnapshot.exists) {
-        userDocument.value = docSnapshot;
-        print(userDocument.value?['email']);
+        userDocSnap.value = docSnapshot;
+        print(userDocSnap.value?['email']);
 
         print('doc exists');
       } else {
@@ -68,11 +68,11 @@ class UserDataController extends GetxController {
     final gymCode = authController.storedGymCode.value;
 
     if (uid.isNotEmpty && gymCode.isNotEmpty) {
-      CollectionReference gymColRef = FirebaseFirestore.instance
+      CollectionReference userCollection = FirebaseFirestore.instance
           .collection(gymCode)
           .doc('clients')
           .collection('clients');
-      DocumentReference clientDocRef = gymColRef.doc(uid);
+      DocumentReference clientDocRef = userCollection.doc(uid);
 
       try {
         // Update Firestore
@@ -87,9 +87,9 @@ class UserDataController extends GetxController {
           'medicalCondition': injuries,
         });
 
-        // Refresh the userDocument in the controller
+        // Refresh the userDocSnap in the controller
         DocumentSnapshot updatedDoc = await clientDocRef.get();
-        userDocument.value = updatedDoc;
+        userDocSnap.value = updatedDoc;
 
         Get.snackbar(
           'Success',

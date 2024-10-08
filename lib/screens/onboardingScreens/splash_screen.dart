@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gymvita_connect/screens/onboardingScreens/onboarding_screen.dart';
@@ -28,12 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (uid != null) {
       // User is authenticated
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const NavbarScreen()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const NavbarScreen()));
     } else {
       // User not logged in
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const OnboardingScreen()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const OnboardingScreen()));
     }
   }
 

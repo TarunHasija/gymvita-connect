@@ -46,24 +46,24 @@ class Profile extends StatelessWidget {
       body: Obx(
         () {
           nameController.text =
-              userController.userDocument.value?['details.name'] ?? '';
+              userController.userDocSnap.value?['details.name'] ?? '';
           phoneNoController.text =
-              userController.userDocument.value?['phoneNo'] ?? '';
-          dobController.text = userController.userDocument.value?['dob'] ?? '';
+              userController.userDocSnap.value?['phoneNo'] ?? '';
+          dobController.text = userController.userDocSnap.value?['dob'] ?? '';
           genderController.text =
-              userController.userDocument.value?['gender'] ?? '';
+              userController.userDocSnap.value?['gender'] ?? '';
           serviceController.text =
-              (userController.userDocument.value?['services'] as List<dynamic>?)
+              (userController.userDocSnap.value?['services'] as List<dynamic>?)
                       ?.join(', ') ??
                   '';
           fitnessGoalController.text = (userController
-                      .userDocument.value?['fitnessGoals'] as List<dynamic>?)
+                      .userDocSnap.value?['fitnessGoals'] as List<dynamic>?)
                   ?.join(', ') ??
               '';
           allergieController.text =
-              userController.userDocument.value?['healthConsiderations'] ?? '';
+              userController.userDocSnap.value?['healthConsiderations'] ?? '';
           injuryController.text =
-              userController.userDocument.value?['medicalCondition'] ?? '';
+              userController.userDocSnap.value?['medicalCondition'] ?? '';
 
           return SingleChildScrollView(
             physics: ScrollPhysics(),
@@ -78,15 +78,15 @@ class Profile extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           radius: 52.r,
-                          backgroundImage: (userController.userDocument
+                          backgroundImage: (userController.userDocSnap
                                           .value?['details.image'] ==
                                       null ||
-                                  userController.userDocument
+                                  userController.userDocSnap
                                           .value!['details.image'] ==
                                       "")
                               ? const AssetImage(
                                   'assets/images/defaultprofile.png')
-                              : NetworkImage(userController.userDocument
+                              : NetworkImage(userController.userDocSnap
                                   .value!['details.image']) as ImageProvider,
                         ),
                         Positioned(
@@ -142,7 +142,7 @@ class Profile extends StatelessWidget {
                           child: ProfileTextFieldInput(
                             readonly: true,
                             textEditingController: TextEditingController(
-                              text: userController.userDocument.value?['email'],
+                              text: userController.userDocSnap.value?['email'],
                             ),
                             hintText: 'Email',
                           ),

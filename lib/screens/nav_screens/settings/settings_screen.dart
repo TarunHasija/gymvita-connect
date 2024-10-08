@@ -54,11 +54,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            userController.userDocument.value?['details.name'],
+                            userController.userDocSnap.value?['details.name'],
                             style: theme.titleMedium?.copyWith(color: white),
                           ),
                           Text(
-                            userController.userDocument.value?['phoneNo'],
+                            userController.userDocSnap.value?['phoneNo'],
                             // '+919868101088',
                             style: theme.displaySmall?.copyWith(color: white),
                           )
@@ -70,14 +70,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       CircleAvatar(
                         radius: 20.r,
                         backgroundImage: (userController
-                                        .userDocument.value?['details.image'] ==
+                                        .userDocSnap.value?['details.image'] ==
                                     null ||
                                 userController
-                                        .userDocument.value!['details.image'] ==
+                                        .userDocSnap.value!['details.image'] ==
                                     "")
                             ? const AssetImage(
                                 'assets/images/defaultprofile.png') // Make sure the asset path is correct
-                            : NetworkImage(userController.userDocument
+                            : NetworkImage(userController.userDocSnap
                                 .value!['details.image']) as ImageProvider,
                       ),
                     ],
@@ -106,7 +106,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Text(
                           'Next Due Date : ' +
-                              userController.userDocument.value?['dueDate'],
+                              userController.userDocSnap.value?['dueDate'],
                           style: theme.displaySmall?.copyWith(
                               color: grey, fontWeight: FontWeight.w400),
                         ),
@@ -224,21 +224,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ],
                           ),
-                          
                         ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            radius:35.r,
-                            backgroundImage: (gymInfoController.gymData.value?['image']==
+                            radius: 35.r,
+                            backgroundImage: (gymInfoController
+                                            .gymData.value?['image'] ==
                                         null ||
-                                    gymInfoController.gymData.value?['image']==
+                                    gymInfoController.gymData.value?['image'] ==
                                         "")
                                 ? const AssetImage(
                                     'assets/images/uploadavatarpng.png.png') // Make sure the asset path is correct
-                                : NetworkImage( gymInfoController.gymData.value?['image']) as ImageProvider,
+                                : NetworkImage(gymInfoController
+                                    .gymData.value?['image']) as ImageProvider,
                           ),
                         ],
                       )

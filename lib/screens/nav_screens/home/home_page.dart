@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
-import 'package:gymvita_connect/screens/nav_screens/home/analysis_form.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/analysis_form_page.dart';
 import 'package:gymvita_connect/widgets/general/custom_bottom_sheet.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/nutrition_plan/nutrition_plan.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/pay_fee/payfee.dart';
@@ -63,13 +63,13 @@ class _HomePageState extends State<HomePage> {
                             //! -----name-----
                             Obx(() {
                               return Text(
-                                "Hi ${userDataController.userDocument.value?['details.name']} 👋🏻",
+                                "Hi ${userDataController.userDocSnap.value?['details.name']} 👋🏻",
                                 style: theme.bodyMedium,
                               );
                             }),
                             Obx(() => Text(
                                   userDataController
-                                      .userDocument.value?['services'][0],
+                                      .userDocSnap.value?['services'][0],
                                   style: theme.displaySmall
                                       ?.copyWith(color: white),
                                 )),
@@ -176,6 +176,9 @@ class _HomePageState extends State<HomePage> {
                 // Update your Monthly Progress button
                 InkWell(
                   onTap: () {
+                    setState(() {
+                      
+                    });
                     Get.to(() => AnalysisForm());
                   },
                   child: Container(
@@ -226,7 +229,6 @@ class _HomePageState extends State<HomePage> {
 
                 SizedBox(height: 20.h),
 
-                // Container for additional content
                 const LineGraph(),
                 SizedBox(
                   height: 20.h,

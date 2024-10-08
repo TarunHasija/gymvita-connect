@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -49,7 +48,7 @@ class ChangeEmailPage extends StatelessWidget {
             ProfileTextFieldInput(
               readonly: true,
               textEditingController: TextEditingController(
-                text: userController.userDocument.value?['email'],
+                text: userController.userDocSnap.value?['email'],
               ),
               hintText: 'current email',
             ),
@@ -76,7 +75,8 @@ class ChangeEmailPage extends StatelessWidget {
                     // Send OTP
                     await profileController.sendOTP(newEmail);
                     // Show OTP bottom sheet
-                    profileController.showOTPSheet(context, userController, newEmail);
+                    profileController.showOTPSheet(
+                        context, userController, newEmail);
                   } else {
                     Get.snackbar('Error', 'Please enter a valid email');
                   }

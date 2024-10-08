@@ -1,15 +1,60 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 
 class MonthlyAnalysisController extends GetxController {
-    final UserDataController userController = Get.find<UserDataController>();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String userId;
+  final UserDataController userController = Get.find<UserDataController>();
 
-  MonthlyAnalysisController({required this.userId});
+  // TextEditingControllers
+  final weightController = TextEditingController();
+  final heightController = TextEditingController();
+  final bicepController = TextEditingController();
+  final hipsController = TextEditingController();
+  final thighsController = TextEditingController();
+  final waistController = TextEditingController();
+  final chestController = TextEditingController();
+  final tricepController = TextEditingController();
 
   RxBool canSubmit = true.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadAnalysisData(); 
+  }
+
+  Future<void> loadAnalysisData() async {
+    DocumentSnapshot? userDocSnap = userController.userDocSnap.value;
+
+    if (userDocSnap != null && userDocSnap.exists) {
+      final data = userDocSnap.data();
+      if (data is Map<String, dynamic>) {
+        Map<String, dynamic>? monthlyAnalysis = data['monthlyAnalysis'] as Map<String, dynamic>?;
+
+        if (monthlyAnalysis != null) {
+          DateTime now = DateTime.now();
+          String year = now.year.toString();
+          String month = _getMonthName(now.month);
+
+          if (monthlyAnalysis[year] != null && monthlyAnalysis[year][month] != null) {
+            final analysis = monthlyAnalysis[year][month];
+
+            weightController.text = analysis['weight'].toString();
+            heightController.text = analysis['height'].toString();
+            bicepController.text = analysis['bicep'].toString();
+            hipsController.text = analysis['hips'].toString();
+            thighsController.text = analysis['thighs'].toString();
+            waistController.text = analysis['waist'].toString();
+            chestController.text = analysis['chest'].toString();
+            tricepController.text = analysis['tricep'].toString();
+
+            canSubmit.value = false;
+          }
+        }
+      }
+    }
+  }
 
   Future<void> submitAnalysis({
     required double weight,
@@ -25,115 +70,73 @@ class MonthlyAnalysisController extends GetxController {
     String year = now.year.toString();
     String month = _getMonthName(now.month);
 
+    DocumentSnapshot? userDocSnap = userController.userDocSnap.value;
 
-    // Access userDocument from UserDataController instead of fetching it again
-    DocumentSnapshot? userDoc = userController.userDocument.value;
-
-    if (userDoc == null || !userDoc.exists) {
+    if (userDocSnap == null || !userDocSnap.exists) {
       throw Exception('User document does not exist');
     }
 
-    Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-    Map<String, dynamic>? monthlyAnalysis = userData?['monthlyAnalysis'] as Map<String, dynamic>?;
+    final data = userDocSnap.data();
+    if (data is Map<String, dynamic>) {
+      Map<String, dynamic>? monthlyAnalysis = data['monthlyAnalysis'] as Map<String, dynamic>?;
 
-    // Check if analysis for the year and month already exists
-    if (monthlyAnalysis != null &&
-        monthlyAnalysis[year] != null &&
-        monthlyAnalysis[year][month] != null) {
-      canSubmit.value = false;
-      return;
-    }
-
-    // Update Firestore with the new analysis
-    await _firestore.collection('users').doc(userId).set({
-      'monthlyAnalysis': {
-        year: {
-          month: {
-            'weight': weight,
-            'height': height,
-            'bicep': bicep,
-            'hips': hips,
-            'thighs': thighs,
-            'waist': waist,
-            'chest': chest,
-            'tricep': tricep,
-          }
-        }
+      if (monthlyAnalysis != null &&
+          monthlyAnalysis[year] != null &&
+          monthlyAnalysis[year][month] != null) {
+        canSubmit.value = false;
+        return;
       }
-    }, SetOptions(merge: true));
 
-    // Update the document in the controller after submission
-    DocumentSnapshot updatedDoc = await _firestore.collection('users').doc(userId).get();
-    userController.userDocument.value = updatedDoc;
+      try {
+        await userController.userDocRef.value?.set({
+          'monthlyAnalysis': {
+            year: {
+              month: {
+                'weight': weight,
+                'height': height,
+                'bicep': bicep,
+                'hips': hips,
+                'thighs': thighs,
+                'waist': waist,
+                'chest': chest,
+                'tricep': tricep,
+              }
+            }
+          }
+        }, SetOptions(merge: true));
 
-    canSubmit.value = false;
-  }
+        DocumentSnapshot? updatedDocSnap = await userController.userDocRef.value?.get();
 
-  Future<Map<String, dynamic>> retrieveAnalysis({required String period}) async {
-    DateTime now = DateTime.now();
-    DateTime startDate;
+        if (updatedDocSnap != null) {
+          userController.userDocSnap.value = updatedDocSnap;
+        } else {
+          print('Document not found');
+          throw Exception('Document not found');
+        }
 
-    if (period == '6months') {
-      startDate = DateTime(now.year, now.month - 6);
-    } else if (period == '1year') {
-      startDate = DateTime(now.year - 1, now.month);
+        canSubmit.value = false;
+      } catch (e) {
+        print('Error submitting analysis: $e');
+        throw Exception('Failed to submit analysis');
+      }
     } else {
-      throw 'Invalid period';
+      print('User document data is not in the expected format.');
+      throw Exception('User document data is not in the expected format.');
     }
-
-    DocumentSnapshot? userDoc = userController.userDocument.value;
-    Map<String, dynamic> analysisData = {};
-
-//     if (userDoc != null && userDoc.exists) {
-// Map<String, dynamic>? monthlyAnalysis = userDoc.data()?['monthlyAnalysis'] as Map<String, dynamic>?;
-//       if (monthlyAnalysis != null) {
-//         monthlyAnalysis.forEach((year, monthsData) {
-//           monthsData.forEach((month, data) {
-//             DateTime entryDate = DateTime(int.parse(year), _getMonthNumber(month));
-//             if (entryDate.isAfter(startDate)) {
-//               analysisData[year] ??= {};
-//               analysisData[year][month] = data;
-//             }
-//           });
-//         });
-//       }
-//     }
-
-    return analysisData;
   }
 
   String _getMonthName(int month) {
     const List<String> months = [
-      'jan',
-      'feb',
-      'mar',
-      'apr',
-      'may',
-      'jun',
-      'jul',
-      'aug',
-      'sep',
-      'oct',
-      'nov',
-      'dec'
+      'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+      'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
     ];
     return months[month - 1];
   }
 
   int _getMonthNumber(String monthName) {
     const List<String> months = [
-      'jan',
-      'feb',
-      'mar',
-      'apr',
-      'may',
-      'jun',
-      'jul',
-      'aug',
-      'sep',
-      'oct',
-      'nov',
-      'dec'
+      'jan', 'feb', 'mar', 'apr', 'may', 'jun',
+      'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
     ];
     return months.indexOf(monthName) + 1;
   }

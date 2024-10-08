@@ -11,7 +11,7 @@ import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
 import 'package:gymvita_connect/firebase_options.dart';
-import 'package:gymvita_connect/screens/onboarding%20screens/splash_screen.dart';
+import 'package:gymvita_connect/screens/onboardingScreens/splash_screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 
 void main() async {
@@ -27,7 +27,7 @@ void main() async {
   Get.put(GymInfoController());
   Get.put(ProfileController());
   final AuthController authController = Get.find<AuthController>();
-  Get.put(MonthlyAnalysisController(userId: authController.storedUid.value));
+  Get.put(MonthlyAnalysisController());
   runApp(const MyApp());
 }
 

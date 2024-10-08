@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:gymvita_connect/controllers/analysis_form.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class AuthController extends GetxController {
@@ -18,36 +18,7 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadStoredUser();
-  }
-
-  Future<void> _storeUserDetails(String email, String password) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('email', email);
-      await prefs.setString('password', password);
-      print('Stored user details: $email, $password');
-    } catch (e) {
-      print('Failed to store user details: ${e.toString()}');
-    }
-  }
-
-  Future<void> _loadStoredUser() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final email = prefs.getString('email');
-      final password = prefs.getString('password');
-
-      if (email != null && password != null) {
-        emailController.text = email;
-        passwordController.text = password;
-        print('Loaded stored user details: $email, $password');
-      } else {
-        print('No stored user details found');
-      }
-    } catch (e) {
-      print('Failed to load stored user details: ${e.toString()}');
-    }
+    
   }
 
   Future<void> handleLogin(
@@ -91,7 +62,7 @@ class AuthController extends GetxController {
           print('Token validation successful');
           storedUid.value = result['uid'];
           storedGymCode.value = result['gymCode'];
-          print(" User Data GYMCODE and USERUID   ${storedGymCode.value}-------${storedUid.value}");
+          print("User Data GYMCODE and USERUID: ${storedGymCode.value} - ${storedUid.value}");
 
           final clientResponse = await clientDetails(result['uid']);
           if (clientResponse == 0) {
@@ -99,9 +70,9 @@ class AuthController extends GetxController {
           }
           updateClient(clientResponse);
           print('Navigating to NavbarScreen');
+           MonthlyAnalysisController monthlyAnalysisController = Get.put(MonthlyAnalysisController());
+        await monthlyAnalysisController.loadAnalysisData();
           Get.offAll(() => NavbarScreen());
-
-          await _storeUserDetails(email, password);
         }
       } else {
         print('Login request failed with status: ${response.statusCode}');
@@ -132,15 +103,15 @@ Future<Map<String, dynamic>?> authUser(String email) async {
       return null;
     }
 
-    var userDoc = querySnapshot.docs.first;
+    var userDocRef = querySnapshot.docs.first;
 
     print(
-        'User data fetched: ${userDoc.id}, ${userDoc['gymCode']}, ${userDoc['jwtToken']}');
+        'User data fetched: ${userDocRef.id}, ${userDocRef['gymCode']}, ${userDocRef['jwtToken']}');
     return {
-      'status': userDoc['status'],
-      'uid': userDoc.id,
-      'gymCode': userDoc['gymCode'],
-      'jwtToken': userDoc['jwtToken'],
+      'status': userDocRef['status'],
+      'uid': userDocRef.id,
+      'gymCode': userDocRef['gymCode'],
+      'jwtToken': userDocRef['jwtToken'],
     };
   } catch (error) {
     print('Error fetching user data: ${error.toString()}');

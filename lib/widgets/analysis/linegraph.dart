@@ -82,12 +82,19 @@ class _LineChartSample2State extends State<LineGraph> {
       case 1:
         text = '5';
         break;
-      case 3:
+      case 2:
         text = '10';
         break;
-      case 5:
+      case 3:
         text = '15';
         break;
+      case 4:
+        text = '20';
+        break;
+      case 5:
+        text = '30';
+        break;
+    
       default:
         return Container();
     }

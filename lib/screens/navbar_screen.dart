@@ -38,8 +38,8 @@ class _NavbarScreenState extends State<NavbarScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(onPressed: () {
         print(gymInfoController.gymData);
-        print("user Document ${userController.userDoc}");
-        print("user snapshot ${userController.userDocument.value}");
+        print("user Document ${userController.userDocRef}");
+        print("user snapshot ${userController.userDocSnap}");
       }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
