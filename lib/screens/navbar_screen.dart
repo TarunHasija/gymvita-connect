@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/analysis_graph_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
+import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
 import 'package:gymvita_connect/screens/nav_screens/analysis/analysis_screen.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/home_page.dart';
 import 'package:gymvita_connect/screens/nav_screens/payment/payment_screen.dart';
@@ -33,13 +35,24 @@ class _NavbarScreenState extends State<NavbarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final UserDataController userController = Get.find();
-    final GymInfoController gymInfoController = Get.find();
+    final AnalysisGraphController analysisGraphController = Get.find();
+    final WorkoutPlanController workoutPlanController = Get.find();
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(onPressed: () {
-        print(gymInfoController.gymData);
-        print("user Document ${userController.userDocRef}");
-        print("user snapshot ${userController.userDocSnap}");
+//TODO: add this to handle login so that when the data loads the graph also loads
+
+        final twelvemonthdata =
+            // analysisGraphController.getLastSixMonthsData('weight');
+            analysisGraphController.getLastSixMonthsData('chest');
+        print(twelvemonthdata);
+        final prevsixmonth =
+            // analysisGraphController.getLastSixMonthsData('weight');
+            analysisGraphController.getPreviousToPreviousSixMonthsData('chest');
+        print(prevsixmonth);
+        workoutPlanController.fetchWorkoutPlan();
       }),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

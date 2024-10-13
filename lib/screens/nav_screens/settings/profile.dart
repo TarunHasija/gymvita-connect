@@ -31,7 +31,7 @@ class Profile extends StatelessWidget {
         scrolledUnderElevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Get.back();
           },
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
@@ -66,7 +66,7 @@ class Profile extends StatelessWidget {
               userController.userDocSnap.value?['medicalCondition'] ?? '';
 
           return SingleChildScrollView(
-            physics: ScrollPhysics(),
+            physics: const ScrollPhysics(),
             child: Padding(
               padding: EdgeInsets.all(20.h),
               child: Column(
@@ -173,6 +173,7 @@ class Profile extends StatelessWidget {
                   // Date of Birth field
                   TextfieldHeading(theme: theme, title: 'Date of birth'),
                   ProfileTextFieldInput(
+                    readonly: true,
                     textEditingController: dobController,
                     hintText: 'DOB',
                   ),

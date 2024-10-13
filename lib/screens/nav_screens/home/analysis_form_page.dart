@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:gymvita_connect/controllers/analysis_form.dart';
+import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 
 class AnalysisForm extends StatelessWidget {
-
-  final MonthlyAnalysisController analysisController = Get.put(MonthlyAnalysisController());
+  final MonthlyAnalysisController analysisController =
+      Get.put(MonthlyAnalysisController());
   final _formKey = GlobalKey<FormState>();
 
   AnalysisForm({super.key});
@@ -18,7 +18,8 @@ class AnalysisForm extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Monthly Analysis Form', style: GoogleFonts.poppins(fontSize: 16.sp)),
+        title: Text('Monthly Analysis Form',
+            style: GoogleFonts.poppins(fontSize: 16.sp)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -26,14 +27,27 @@ class AnalysisForm extends StatelessWidget {
           key: _formKey,
           child: Column(
             children: [
-              _buildInputField(theme, analysisController.weightController, 'Weight (Kg)', 'Enter your weight'),
-              _buildInputField(theme, analysisController.heightController, 'Height (cm)', 'Enter your height'),
-              _buildInputField(theme, analysisController.bicepController, 'Bicep (cm)', 'Enter your bicep size'),
-              _buildInputField(theme, analysisController.hipsController, 'Hips (cm)', 'Enter your hip size'),
-              _buildInputField(theme, analysisController.thighsController, 'Thighs (cm)', 'Enter your thigh size'),
-              _buildInputField(theme, analysisController.waistController, 'Waist (cm)', 'Enter your waist size'),
-              _buildInputField(theme, analysisController.chestController, 'Chest (cm)', 'Enter your chest size'),
-              _buildInputField(theme, analysisController.tricepController, 'Tricep (cm)', 'Enter your tricep size'),
+              analysisController.canSubmit.value?
+               Container(
+                margin: EdgeInsets.only(bottom: 12.h),
+                child: Text("Please Enter valid Data"),
+              ):SizedBox(),
+              _buildInputField(theme, analysisController.weightController,
+                  'Weight (Kg)', 'Enter your weight'),
+              _buildInputField(theme, analysisController.heightController,
+                  'Height (cm)', 'Enter your height'),
+              _buildInputField(theme, analysisController.bicepController,
+                  'Bicep (cm)', 'Enter your bicep size'),
+              _buildInputField(theme, analysisController.hipsController,
+                  'Hips (cm)', 'Enter your hip size'),
+              _buildInputField(theme, analysisController.thighsController,
+                  'Thighs (cm)', 'Enter your thigh size'),
+              _buildInputField(theme, analysisController.waistController,
+                  'Waist (cm)', 'Enter your waist size'),
+              _buildInputField(theme, analysisController.chestController,
+                  'Chest (cm)', 'Enter your chest size'),
+              _buildInputField(theme, analysisController.tricepController,
+                  'Tricep (cm)', 'Enter your tricep size'),
 
               const SizedBox(height: 20),
 
@@ -61,7 +75,7 @@ class AnalysisForm extends StatelessWidget {
                           ),
                         ),
                       )
-                    : const Text('Data submitted for this month.');
+                    : const Text('Data submitted for this month',style: TextStyle(color: Colors.green),);
               }),
             ],
           ),
@@ -71,7 +85,8 @@ class AnalysisForm extends StatelessWidget {
   }
 
   // Helper function to create form fields
-  Widget _buildInputField(TextTheme theme, TextEditingController controller, String label, String hint) {
+  Widget _buildInputField(TextTheme theme, TextEditingController controller,
+      String label, String hint) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: TextFormField(
@@ -91,7 +106,8 @@ class AnalysisForm extends StatelessWidget {
           ),
           labelText: label,
           hintText: hint,
-          hintStyle: theme.labelLarge?.copyWith(color: const Color.fromARGB(255, 179, 179, 179)),
+          hintStyle: theme.labelLarge
+              ?.copyWith(color: const Color.fromARGB(255, 179, 179, 179)),
         ),
         keyboardType: TextInputType.number,
         validator: (value) {

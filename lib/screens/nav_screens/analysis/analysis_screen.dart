@@ -26,83 +26,105 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
     Color btnOneYearColor = isSixMonth ? secondary : accent;
 
     return Scaffold(
-      appBar:  AppBar(
+      appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>const NavbarScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const NavbarScreen()));
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: Text('Analysis', style: theme.displayMedium?.copyWith(fontSize: 24.sp)),
+            child: Text('Analysis',
+                style: theme.displayMedium?.copyWith(fontSize: 24.sp)),
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric( horizontal: 20.w),
-        child: Stack(
-          children: [
-            // Scrollable content
-            Positioned.fill( 
-              child: SingleChildScrollView(
-                padding: EdgeInsets.only(top: 20.h), // Add top padding to make room for the Row
-                child: Column(
-                  children: [
-                    analysisGraph(theme, isSixMonth, 'Bicep'),
-                    analysisGraph(theme, isSixMonth, 'Chest'),
-                    analysisGraph(theme, isSixMonth, 'Height'),
-                    analysisGraph(theme, isSixMonth, 'Hips'),
-                    analysisGraph(theme, isSixMonth, 'Weight'),
-                    analysisGraph(theme, isSixMonth, 'Thighs'),
-                    analysisGraph(theme, isSixMonth, 'Triceps'),
-                  ],
+      body: RefreshIndicator(
+        onRefresh: () {
+          return Future.delayed(const Duration(seconds: 2), () {
+            setState(() {});
+          });
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Stack(
+            children: [
+              // Scrollable content
+              Positioned.fill(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.only(
+                      top: 20.h), // Add top padding to make room for the Row
+                  child: Column(
+                    children: [
+                      analysisGraph(
+                          theme, isSixMonth, 'Bicep', 'bicep', 50, 0, 'cm'),
+                      analysisGraph(
+                          theme, isSixMonth, 'Tricep', 'tricep', 50, 0, 'cm'),
+                      analysisGraph(
+                          theme, isSixMonth, 'Weight', 'weight', 120, 40, 'kg'),
+                      analysisGraph(theme, isSixMonth, 'Height', 'height', 190,
+                          140, 'cm'),
+                      analysisGraph(
+                          theme, isSixMonth, 'Hips', 'hips', 130, 70, 'cm'),
+                      analysisGraph(
+                          theme, isSixMonth, 'Thighs', 'thighs', 80, 30, 'cm'),
+                      analysisGraph(
+                          theme, isSixMonth, 'Chest', 'chest', 130, 50, 'cm'),
+                      analysisGraph(
+                          theme, isSixMonth, 'Waist', 'waist', 130, 60, 'cm'),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            // The Row with buttons stays on top
-            Positioned(
-              top: 0, // Pin to the top of the Stack
-              left: 0,
-              right: 0,
-              child: Container(
-                margin: EdgeInsets.only(top: 10.h),
-                height: 35.h,
-                decoration: const BoxDecoration(color: Colors.transparent),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    HorizontalCard(
-                      title: '6 months',
-                      theme: theme.copyWith(
-                        bodySmall: theme.bodySmall?.copyWith(color: sixMonthTextColor),
+              // The Row with buttons stays on top
+              Positioned(
+                top: 0, // Pin to the top of the Stack
+                left: 0,
+                right: 0,
+                child: Container(
+                  margin: EdgeInsets.only(top: 10.h),
+                  height: 35.h,
+                  decoration: const BoxDecoration(color: Colors.transparent),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      HorizontalCard(
+                        title: 'Current 6 months',
+                        theme: theme.copyWith(
+                          bodySmall: theme.bodySmall
+                              ?.copyWith(color: sixMonthTextColor),
+                        ),
+                        color: btnSixMonthColor,
+                        onTapp: () {
+                          setState(() {
+                            isSixMonth = true;
+                          });
+                        },
                       ),
-                      color: btnSixMonthColor,
-                      onTapp: () {
-                        setState(() {
-                          isSixMonth = true;
-                        });
-                      },
-                    ),
-                    HorizontalCard(
-                      title: '1 year',
-                      theme: theme.copyWith(
-                        bodySmall: theme.bodySmall?.copyWith(color: oneYearTextColor),
+                      HorizontalCard(
+                        title: 'Previous 6 month',
+                        theme: theme.copyWith(
+                          bodySmall: theme.bodySmall
+                              ?.copyWith(color: oneYearTextColor,fontWeight: FontWeight.bold),
+                        ),
+                        color: btnOneYearColor,
+                        onTapp: () {
+                          setState(() {
+                            isSixMonth = false;
+                          });
+                        },
                       ),
-                      color: btnOneYearColor,
-                      onTapp: () {
-                        setState(() {
-                          isSixMonth = false;
-                        });
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

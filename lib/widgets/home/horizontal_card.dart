@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 
+
+// used in analysis graph page 
+
+
 class HorizontalCard extends StatelessWidget {
   final Color? color;
   final String title;
