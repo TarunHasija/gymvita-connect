@@ -3,37 +3,30 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gymvita_connect/widgets/appbar.dart';
 import 'package:gymvita_connect/widgets/home/dashboard/exercise_tile.dart';
 
-class ExercisePage extends StatefulWidget {
+class ExercisePage extends StatelessWidget {
   final String bodyPart;
-  const ExercisePage({super.key, required this.bodyPart});
+  final List<dynamic> exercises; // The list of exercises for that specific day
 
-  @override
-  State<ExercisePage> createState() => _ExercisePageState();
-}
+  const ExercisePage({super.key, required this.bodyPart, required this.exercises});
 
-class _ExercisePageState extends State<ExercisePage> {
   @override
   Widget build(BuildContext context) {
-    
-    final exercises = [
-      {'exercise': 'Bench Press', 'reps': '12x4'},
-      {'exercise': 'Squats', 'reps': '10x3'},
-      {'exercise': 'Deadlift', 'reps': '8x3'},
-    ];
-
     return Scaffold(
       appBar: CustomAppBar(
-        title: widget.bodyPart,
+        title: bodyPart,
       ),
       body: Padding(
         padding: EdgeInsets.all(20.h),
         child: ListView.builder(
           itemCount: exercises.length,
           itemBuilder: (context, index) {
-            var exercise = exercises[index];
+            var exerciseData = exercises[index]; // Get exercise details (name and reps)
+            var exerciseName = exerciseData['name'];
+            var exerciseReps = exerciseData['reps'];
+
             return ExerciseTile(
-              exercise: exercise['exercise']!,
-              reps: exercise['reps']!,
+              exercise: exerciseName,
+              reps: exerciseReps,
             );
           },
         ),

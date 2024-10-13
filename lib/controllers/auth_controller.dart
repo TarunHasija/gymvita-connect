@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:gymvita_connect/controllers/analysis_form.dart';
+import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:http/http.dart' as http;

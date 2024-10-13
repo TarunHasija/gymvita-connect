@@ -30,29 +30,32 @@ class UserDataController extends GetxController {
     }
   }
 
-  Future<void> getUserData(String uid, String gymCode) async {
-    print("$uid----------$gymCode");
-    CollectionReference userCollection = FirebaseFirestore.instance
-        .collection(gymCode)
-        .doc('clients')
-        .collection('clients');
-    DocumentReference clientDocRef = userCollection.doc(uid);
-    userDocRef.value = clientDocRef;
-  
-    try {
-      DocumentSnapshot docSnapshot = await clientDocRef.get();
-      if (docSnapshot.exists) {
-        userDocSnap.value = docSnapshot;
-        print(userDocSnap.value?['email']);
+ Future<void> getUserData(String uid, String gymCode) async {
+  print("$uid----------$gymCode");
 
-        print('doc exists');
+  CollectionReference userCollection = FirebaseFirestore.instance
+      .collection(gymCode)
+      .doc('clients')
+      .collection('clients');
+  DocumentReference clientDocRef = userCollection.doc(uid);
+  userDocRef.value = clientDocRef;
+
+  try {
+    // Listen for real-time updates using snapshots()
+    clientDocRef.snapshots().listen((DocumentSnapshot docSnapshot) {
+      if (docSnapshot.exists) {
+        userDocSnap.value = docSnapshot; // Update the userDocSnap with the new data
+        print(userDocSnap.value?['email']); // Example: print email to debug
+
+        print('Document exists and updated in real-time');
       } else {
         throw Exception("Document not found");
       }
-    } catch (error) {
-      print("Error fetching user data: ${error.toString()}");
-    }
+    });
+  } catch (error) {
+    print("Error fetching user data: ${error.toString()}");
   }
+}
 
   Future<void> updateUserData({
     required String name,

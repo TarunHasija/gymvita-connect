@@ -17,7 +17,6 @@ class WorkOutPlanPage extends StatefulWidget {
 class _WorkOutPlanPageState extends State<WorkOutPlanPage> {
   @override
   Widget build(BuildContext context) {
-
     final WorkoutPlanController workoutPlanController = Get.find<WorkoutPlanController>();
 
     return Scaffold(
@@ -31,7 +30,7 @@ class _WorkOutPlanPageState extends State<WorkOutPlanPage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No workout plans available rightnow'));
+              return const Center(child: Text('No workout plans available right now'));
             }
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
@@ -45,12 +44,14 @@ class _WorkOutPlanPageState extends State<WorkOutPlanPage> {
                 var item = details[index] as Map<String, dynamic>;
                 var day = item.keys.first;
                 var bodyPart = item[day]['part'];
+                var exercises = item[day]['exercise']; // Get the exercises for this day
 
                 return WorkoutPlanTile(
                   ontap: () {
+                    // Pass both bodyPart and exercises to the ExercisePage
                     navigateWithAnimation(
                       context,
-                      ExercisePage(bodyPart: bodyPart),
+                      ExercisePage(bodyPart: bodyPart, exercises: exercises),
                     );
                   },
                   day: day,

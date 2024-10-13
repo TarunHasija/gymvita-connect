@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:gymvita_connect/controllers/analysis_form.dart';
+import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
+import 'package:gymvita_connect/controllers/analysis_graph_controller.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
+import 'package:gymvita_connect/controllers/home_graph_controller.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
 import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
@@ -26,8 +28,9 @@ void main() async {
   Get.put(WorkoutPlanController());
   Get.put(GymInfoController());
   Get.put(ProfileController());
-  final AuthController authController = Get.find<AuthController>();
   Get.put(MonthlyAnalysisController());
+  Get.put(AnalysisGraphController());
+  Get.put(HomeGraphController());
   runApp(const MyApp());
 }
 
@@ -43,7 +46,8 @@ class MyApp extends StatelessWidget {
       builder: (_, child) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
+          theme: ThemeData
+          (primaryColor: primary,
             primarySwatch: Colors.grey,
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
                 backgroundColor: primary,

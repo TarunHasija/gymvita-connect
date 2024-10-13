@@ -203,24 +203,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               SizedBox(
                                 width: 10.w,
                               ),
-                              Text(
-                                gymInfoController.gymData.value?['address']
-                                        ['houseNo'] +
-                                    " / " +
-                                    gymInfoController.gymData.value?['address']
-                                        ['area'] +
-                                    ", " +
-                                    gymInfoController.gymData.value?['address']
-                                        ['city'] +
-                                    ", " +
-                                    gymInfoController.gymData.value?['address']
-                                        ['state'] +
-                                    "-" +
-                                    gymInfoController.gymData.value?['address']
-                                        ['pincode'],
-                                // 'B-66/1 , delhi , East Delhi - 110051',
-                                style: theme.displaySmall
-                                    ?.copyWith(color: white, fontSize: 10.sp),
+                              SizedBox(
+                                width: 200.w,
+                                child: Text(
+                                  
+                                  gymInfoController.gymData.value?['address']
+                                          ['houseNo'] +
+                                      " / " +
+                                      gymInfoController.gymData.value?['address']
+                                          ['area'] +
+                                      ", " +
+                                      gymInfoController.gymData.value?['address']
+                                          ['city'] +
+                                      ", " +
+                                      gymInfoController.gymData.value?['address']
+                                          ['state'] +
+                                      "-" +
+                                      gymInfoController.gymData.value?['address']
+                                          ['pincode'],
+                                  // 'B-66/1 , delhi , East Delhi - 110051',
+                                  style: theme.displaySmall
+                                      ?.copyWith(color: white, fontSize: 10.sp),
+                                ),
                               ),
                             ],
                           ),

@@ -15,7 +15,7 @@ class TextFieldInput extends StatelessWidget {
     this.isPassword = false,
     required this.hintText,
     this.showPassword = false,
-     this.togglePasswordVisibility,
+    this.togglePasswordVisibility,
   });
 
   @override
@@ -40,8 +40,6 @@ class TextFieldInput extends StatelessWidget {
         labelStyle: const TextStyle(color: Colors.black),
         filled: true,
         fillColor: white,
-
-        // contentPadding:  EdgeInsets.symmetric(horizontal: 15.w,vertical: 15.h),
         suffixIcon: isPassword
             ? IconButton(
                 icon: Icon(
@@ -53,6 +51,15 @@ class TextFieldInput extends StatelessWidget {
             : null,
       ),
       obscureText: isPassword && !showPassword,
+      onChanged: (value) {
+        // Check if the field is not a password field, and convert to lowercase
+        if (!isPassword) {
+          textEditingController.text = value.toLowerCase();
+          textEditingController.selection = TextSelection.fromPosition(
+            TextPosition(offset: textEditingController.text.length),
+          );
+        }
+      },
     );
   }
 }

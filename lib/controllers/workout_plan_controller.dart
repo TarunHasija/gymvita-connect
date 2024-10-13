@@ -3,11 +3,6 @@ import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 
 class WorkoutPlanController extends GetxController {
-  var isRemindMe = false.obs();
-
-  void toggleReminder() {
-    isRemindMe != isRemindMe;
-  }
 
   final authController = Get.find<AuthController>();
 
