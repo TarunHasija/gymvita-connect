@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gymvita_connect/screens/onboardingScreens/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gymvita_connect/controllers/auth_controller.dart'; // Import your AuthController
 import 'package:gymvita_connect/screens/navbar_screen.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-const _storage = FlutterSecureStorage();
+import 'package:gymvita_connect/screens/onboardingScreens/onboarding_screen.dart';
+import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,6 +13,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  AuthController authController =
+      Get.put(AuthController()); // Get the AuthController
+
   @override
   void initState() {
     super.initState();
@@ -24,17 +25,20 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _navigateBasedOnStatus() async {
     await Future.delayed(const Duration(seconds: 3));
 
-    // Load stored user credentials
-    final uid = await _storage.read(key: "uid");
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? storedEmail = prefs.getString('email');
+    final String? storedPassword = prefs.getString('password');
 
-    if (uid != null) {
-      // User is authenticated
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const NavbarScreen()));
+    if (storedEmail != null && storedPassword != null) {
+      print("Stored email and password found: Logging in...");
+      authController.emailController.text = storedEmail;
+      authController.passwordController.text = storedPassword;
+      await authController.handleLogin(context, authController.emailController,
+          authController.passwordController);
+      Get.offAll(()=> NavbarScreen());
     } else {
-      // User not logged in
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()));
+      print("No stored credentials found, navigating to onboarding screen.");
+      Get.offAll(() => const OnboardingScreen());
     }
   }
 
@@ -43,8 +47,9 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: SizedBox(
-          height: 120.h,
-          child: Image.asset('assets/images/splashlogo.png'),
+          height: 120, // Adjust the size as per your image or splash logo
+          child: Image.asset(
+              'assets/images/splashlogo.png'), // Your splash screen image
         ),
       ),
     );

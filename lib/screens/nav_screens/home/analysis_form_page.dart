@@ -84,12 +84,12 @@ class AnalysisForm extends StatelessWidget {
     );
   }
 
-  // Helper function to create form fields
   Widget _buildInputField(TextTheme theme, TextEditingController controller,
-      String label, String hint) {
+      String label, String hint,) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: TextFormField(
+        readOnly: !analysisController.canSubmit.value,
         controller: controller,
         decoration: InputDecoration(
           border: OutlineInputBorder(

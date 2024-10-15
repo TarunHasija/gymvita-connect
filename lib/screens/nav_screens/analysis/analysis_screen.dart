@@ -30,7 +30,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
         leading: IconButton(
           onPressed: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const NavbarScreen()));
+                MaterialPageRoute(builder: (context) => NavbarScreen()));
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),

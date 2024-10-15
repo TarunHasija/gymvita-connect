@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/change_email.dart';
 import 'package:gymvita_connect/utils/colors.dart';
@@ -25,6 +26,7 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TextTheme theme = Theme.of(context).textTheme;
+    final ProfileController profileController = Get.find<ProfileController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -77,6 +79,7 @@ class Profile extends StatelessWidget {
                       clipBehavior: Clip.none,
                       children: [
                         CircleAvatar(
+                          backgroundColor: secondary,
                           radius: 52.r,
                           backgroundImage: (userController.userDocSnap
                                           .value?['details.image'] ==
@@ -92,16 +95,16 @@ class Profile extends StatelessWidget {
                         Positioned(
                           bottom: -5.h,
                           right: 8.h,
-                          child: Container(
-                            padding: EdgeInsets.all(8.h),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                print("edit photo");
-                              },
+                          child: GestureDetector(
+                            onTap: () {
+                              profileController.selectFile();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(8.h),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
                               child: Icon(
                                 Icons.edit,
                                 size: 20.h,

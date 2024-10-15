@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
+import 'package:gymvita_connect/screens/onboardingscreens/login.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
   final RxString storedUid = ''.obs;
@@ -18,7 +20,6 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    
   }
 
   Future<void> handleLogin(
@@ -62,16 +63,23 @@ class AuthController extends GetxController {
           print('Token validation successful');
           storedUid.value = result['uid'];
           storedGymCode.value = result['gymCode'];
-          print("User Data GYMCODE and USERUID: ${storedGymCode.value} - ${storedUid.value}");
+          print(
+              "User Data GYMCODE and USERUID: ${storedGymCode.value} - ${storedUid.value}");
 
           final clientResponse = await clientDetails(result['uid']);
           if (clientResponse == 0) {
             throw Exception("Client not found");
           }
-          updateClient(clientResponse);
-          print('Navigating to NavbarScreen');
-           MonthlyAnalysisController monthlyAnalysisController = Get.put(MonthlyAnalysisController());
-        await monthlyAnalysisController.loadAnalysisData();
+
+          //! shared preference
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('email', email);
+          await prefs.setString('password', password);
+
+          MonthlyAnalysisController monthlyAnalysisController =
+              Get.put(MonthlyAnalysisController());
+          await monthlyAnalysisController.loadAnalysisData();
           Get.offAll(() => NavbarScreen());
         }
       } else {
@@ -86,69 +94,83 @@ class AuthController extends GetxController {
       print('Login process completed');
     }
   }
-}
 
-Future<Map<String, dynamic>?> authUser(String email) async {
-  print('Fetching user data for email: $email');
-  try {
-    print("-------------Testing-------------------");
-    CollectionReference gymsCollection =
-        FirebaseFirestore.instance.collection('GymsCommonCollection');
+  Future<void> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    QuerySnapshot querySnapshot =
-        await gymsCollection.where('email', isEqualTo: email).get();
+    // Clear the saved user credentials
+    await prefs.clear();
 
-    if (querySnapshot.docs.isEmpty) {
-      print('No user found for email: $email');
+    // Optionally, clear any controllers
+    await prefs.remove('email');
+    await prefs.remove('password');
+
+    emailController.clear();
+  passwordController.clear();
+
+    // Navigate the user back to the login screen
+    Get.offAll(
+        () => const LoginScreen()); // Replace with your actual login screen
+  }
+
+  Future<Map<String, dynamic>?> authUser(String email) async {
+    print('Fetching user data for email: $email');
+    try {
+      print("-------------Testing-------------------");
+      CollectionReference gymsCollection =
+          FirebaseFirestore.instance.collection('GymsCommonCollection');
+
+      QuerySnapshot querySnapshot =
+          await gymsCollection.where('email', isEqualTo: email).get();
+
+      if (querySnapshot.docs.isEmpty) {
+        print('No user found for email: $email');
+        return null;
+      }
+
+      var userDocRef = querySnapshot.docs.first;
+
+      print(
+          'User data fetched: ${userDocRef.id}, ${userDocRef['gymCode']}, ${userDocRef['jwtToken']}');
+      return {
+        'status': userDocRef['status'],
+        'uid': userDocRef.id,
+        'gymCode': userDocRef['gymCode'],
+        'jwtToken': userDocRef['jwtToken'],
+      };
+    } catch (error) {
+      print('Error fetching user data: ${error.toString()}');
       return null;
     }
-
-    var userDocRef = querySnapshot.docs.first;
-
-    print(
-        'User data fetched: ${userDocRef.id}, ${userDocRef['gymCode']}, ${userDocRef['jwtToken']}');
-    return {
-      'status': userDocRef['status'],
-      'uid': userDocRef.id,
-      'gymCode': userDocRef['gymCode'],
-      'jwtToken': userDocRef['jwtToken'],
-    };
-  } catch (error) {
-    print('Error fetching user data: ${error.toString()}');
-    return null;
   }
-}
 
-Future<dynamic> clientDetails(String uid) async {
-  print('Fetching client details for uid: $uid');
-  await Future.delayed(const Duration(seconds: 1));
-  return {};
-}
+  Future<dynamic> clientDetails(String uid) async {
+    print('Fetching client details for uid: $uid');
+    await Future.delayed(const Duration(seconds: 1));
+    return {};
+  }
 
-void updateClient(dynamic response) {
-  print('Updating client with response: $response');
-}
-
-void _showAlertDialog(BuildContext context, String message) {
-  print('Showing alert dialog with message: $message');
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
-        actions: <Widget>[
-          TextButton(
-            child: const Text(
-              'OK',
-              style: TextStyle(color: white),
+  void _showAlertDialog(BuildContext context, String message) {
+    print('Showing alert dialog with message: $message');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'OK',
+                style: TextStyle(color: white),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
+          ],
+        );
+      },
+    );
+  }
 }

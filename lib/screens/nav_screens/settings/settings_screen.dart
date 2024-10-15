@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/pay_fee/payfee.dart';
 import 'package:gymvita_connect/screens/nav_screens/payment/payment_screen.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/help_screen.dart';
+import 'package:gymvita_connect/screens/navbar_screen.dart';
 import 'package:gymvita_connect/widgets/general/custom_bottom_sheet.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/profile.dart';
 import 'package:gymvita_connect/utils/colors.dart';
@@ -27,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     TextEditingController feedbackTitle = TextEditingController();
     final UserDataController userController = Get.find();
     final GymInfoController gymInfoController = Get.find();
+    final AuthController authController = Get.find<AuthController>();
     TextEditingController feedbackMessage = TextEditingController();
 
     return SafeArea(
@@ -43,7 +46,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Get.to(() => NavbarScreen());
                           },
                           icon: const Icon(Icons.arrow_back_ios_new_rounded))
                     ],
@@ -59,7 +62,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           Text(
                             userController.userDocSnap.value?['phoneNo'],
-                            // '+919868101088',
                             style: theme.displaySmall?.copyWith(color: white),
                           )
                         ],
@@ -114,10 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PayFee()));
+                          Get.to(() => const PayFee());
                         },
                         child: Container(
                           alignment: Alignment.center,
@@ -136,92 +135,80 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               Container(
-                  padding: EdgeInsets.all(15.h),
-                  decoration: BoxDecoration(
-                      color: secondary,
-                      borderRadius: BorderRadius.circular(10.r)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
+                padding: EdgeInsets.all(15.h),
+                decoration: BoxDecoration(
+                  color: secondary,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment
+                      .start, // Ensure alignment is responsive
+                  children: [
+                    // Left Column with Gym Info
+                    Expanded(
+                      // Wrap this column in Expanded to ensure it uses available space
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            gymInfoController.gymData.value?['gymName'],
+                            gymInfoController.gymData.value?['gymName'] ?? '',
                             style: theme.headlineSmall?.copyWith(color: accent),
                           ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
+                          SizedBox(height: 10.h),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.phone_outlined,
-                                size: 20.h,
-                              ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              Text(
-                                gymInfoController.gymData.value?['phoneNo'],
-                                style: theme.displaySmall
-                                    ?.copyWith(color: white, fontSize: 10.sp),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.mail_outlined,
-                                size: 20.h,
-                              ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              Text(
-                                gymInfoController.gymData.value?['email'],
-                                style: theme.displaySmall
-                                    ?.copyWith(color: white, fontSize: 10.sp),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10.h,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.location_pin,
-                                size: 20.h,
-                              ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              SizedBox(
-                                width: 200.w,
+                              Icon(Icons.phone_outlined, size: 20.h),
+                              SizedBox(width: 10.w),
+                              Flexible(
+                                // Allow the text to wrap when needed
                                 child: Text(
-                                  
+                                  gymInfoController.gymData.value?['phoneNo'] ??
+                                      '',
+                                  style: theme.displaySmall
+                                      ?.copyWith(color: white, fontSize: 10.sp),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10.h),
+                          Row(
+                            children: [
+                              Icon(Icons.mail_outlined, size: 20.h),
+                              SizedBox(width: 10.w),
+                              Flexible(
+                                // Allow the email text to wrap
+                                child: Text(
+                                  gymInfoController.gymData.value?['email'] ??
+                                      '',
+                                  style: theme.displaySmall
+                                      ?.copyWith(color: white, fontSize: 10.sp),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10.h),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.location_pin, size: 20.h),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: Text(
                                   gymInfoController.gymData.value?['address']
                                           ['houseNo'] +
                                       " / " +
-                                      gymInfoController.gymData.value?['address']
-                                          ['area'] +
+                                      gymInfoController
+                                          .gymData.value?['address']['area'] +
                                       ", " +
-                                      gymInfoController.gymData.value?['address']
-                                          ['city'] +
+                                      gymInfoController
+                                          .gymData.value?['address']['city'] +
                                       ", " +
-                                      gymInfoController.gymData.value?['address']
-                                          ['state'] +
+                                      gymInfoController
+                                          .gymData.value?['address']['state'] +
                                       "-" +
-                                      gymInfoController.gymData.value?['address']
-                                          ['pincode'],
-                                  // 'B-66/1 , delhi , East Delhi - 110051',
+                                      gymInfoController
+                                          .gymData.value?['address']['pincode'],
                                   style: theme.displaySmall
                                       ?.copyWith(color: white, fontSize: 10.sp),
                                 ),
@@ -230,25 +217,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ],
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 35.r,
-                            backgroundImage: (gymInfoController
-                                            .gymData.value?['image'] ==
-                                        null ||
-                                    gymInfoController.gymData.value?['image'] ==
-                                        "")
-                                ? const AssetImage(
-                                    'assets/images/uploadavatarpng.png.png') // Make sure the asset path is correct
-                                : NetworkImage(gymInfoController
-                                    .gymData.value?['image']) as ImageProvider,
-                          ),
-                        ],
-                      )
-                    ],
-                  )),
+                    ),
+                    SizedBox(width: 10.w), // Add space between text and image
+                    // Right Column with Image
+                    CircleAvatar(
+                      radius: 35.r,
+                      backgroundImage: (gymInfoController
+                                      .gymData.value?['image'] ==
+                                  null ||
+                              gymInfoController.gymData.value?['image'] == "")
+                          ? const AssetImage(
+                              'assets/images/uploadavatarpng.png.png') // Placeholder image
+                          : NetworkImage(
+                                  gymInfoController.gymData.value?['image'])
+                              as ImageProvider,
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 margin: EdgeInsets.symmetric(vertical: 10.h),
                 padding: EdgeInsets.all(10.h),
@@ -363,7 +349,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SettingCard(
                         icon: MaterialSymbols.logout,
                         title: 'logout',
-                        ontap: () {}),
+                        ontap: () {
+                          authController.logout();
+                        }),
                   ],
                 ),
               ),

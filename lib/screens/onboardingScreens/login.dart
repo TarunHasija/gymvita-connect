@@ -121,23 +121,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: primary,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: authController.isLoading.value
-                                ? Container(
-                                    padding: EdgeInsets.all(3.h),
-                                    child: const CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : IntrinsicWidth(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text("Login"),
-                                        SizedBox(width: 10.w),
-                                        Icon(Icons.arrow_forward_ios_rounded, size: 16.h),
-                                      ],
-                                    ),
-                                  ),
+                            child: IntrinsicWidth(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Login"),
+                                  SizedBox(width: 10.w),
+                                  Icon(Icons.arrow_forward_ios_rounded, size: 16.h),
+                                ],
+                              ),
+                            ),
                           ),
                         )),
                     Flexible(flex: 1, child: Container()),
@@ -153,6 +146,27 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+          Obx(() {
+            if (authController.isLoading.value) {
+              return Stack(
+                children: [
+                  // Semi-transparent background
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5), // Darker background
+                    ),
+                  ),
+                  // CircularProgressIndicator in the center
+                  const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              );
+            }
+            return Container();
+          }),
         ],
       ),
     );

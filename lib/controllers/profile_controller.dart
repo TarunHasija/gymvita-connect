@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -14,6 +17,7 @@ class ProfileController extends GetxController {
   final RxBool _isOTPSent = false.obs;
 
   final UserDataController userController = Get.find<UserDataController>();
+  final AuthController authController = Get.find<AuthController>();
 
   Future<void> sendOTP(String currentEmail) async {
     ActionCodeSettings actionCodeSettings = ActionCodeSettings(
@@ -133,5 +137,16 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future selectFile() async {}
+  selectFile() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    final storageRef = FirebaseStorage.instance.ref();
+    final imageRef = storageRef.child("${authController.storedGymCode}/clients/${authController.storedUid}");
+    final imageBytes = await image.readAsBytes();
+    await imageRef.putData(imageBytes);
+    
+    print("Image uploaded successfully to ${authController.storedGymCode}/clients/");
+  }
 }
