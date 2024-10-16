@@ -14,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   AuthController authController =
-      Get.put(AuthController()); // Get the AuthController
+      Get.put(AuthController()); 
 
   @override
   void initState() {

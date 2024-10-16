@@ -14,7 +14,7 @@ class NutritionPlanController extends GetxController {
     isRemindMe.value = !isRemindMe.value;
   }
 
-  final authController = Get.find<AuthController>();
+  final AuthController authController = Get.find<AuthController>();
 
   // Store the DocumentSnapshot separately
   final nutritionSnapshot = Rx<DocumentSnapshot?>(null);

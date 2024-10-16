@@ -81,12 +81,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     SizedBox(height: 30.h),
+                    // Email input
                     TextFieldInput(
                       textEditingController: authController.emailController,
                       hintText: 'Enter your email',
-                      togglePasswordVisibility: () {},
+                      togglePasswordVisibility: () {}, // Not needed for email
                     ),
                     SizedBox(height: 30.h),
+                    // Password input
                     TextFieldInput(
                       textEditingController: authController.passwordController,
                       hintText: 'Enter your password',
@@ -95,10 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       togglePasswordVisibility: _togglePasswordVisibility,
                     ),
                     SizedBox(height: 10.h),
+                    // Forgot Password
                     Align(
                       alignment: Alignment.centerRight,
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          // Forgot Password Logic (if needed)
+                        },
                         child: Text(
                           'Forgot Password?',
                           style: theme.displaySmall,
@@ -106,7 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     SizedBox(height: 30.h),
-                    Obx(() => InkWell(
+                    // Login Button
+                    InkWell(
                           onTap: () {
                             authController.handleLogin(
                               context,
@@ -132,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                        )),
+                        ),
                     Flexible(flex: 1, child: Container()),
                     Align(
                       alignment: Alignment.bottomRight,
@@ -146,6 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+          // Loading overlay
           Obx(() {
             if (authController.isLoading.value) {
               return Stack(
