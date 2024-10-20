@@ -99,6 +99,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          //TODO: Plan name ;
+
                           'Gold Plan',
                           style: theme.bodyMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
@@ -177,7 +179,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Icon(Icons.mail_outlined, size: 20.h),
                               SizedBox(width: 10.w),
                               Flexible(
-                                // Allow the email text to wrap
                                 child: Text(
                                   gymInfoController.gymData.value?['email'] ??
                                       '',
@@ -248,10 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: MaterialSymbols.person,
                         title: 'Profile',
                         ontap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Profile()));
+                          Get.to(() => Profile());
                         }),
                     const Divider(
                       endIndent: 20,

@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -6,113 +9,177 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
+import 'package:gymvita_connect/screens/nav_screens/settings/profile.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController newEmailController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final RxBool _isOTPSent = false.obs;
+  final RxBool _isResendAllowed = false.obs;
+  final RxInt _resendTimer = 30.obs;
+  RxString fetchOtp = ''.obs;
+
+
+
+  Timer? _timer;
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
+    _otpController.clear();
+  }
 
   final UserDataController userController = Get.find<UserDataController>();
   final AuthController authController = Get.find<AuthController>();
 
+  // Send OTP and handle failure or success
   Future<void> sendOTP(String currentEmail) async {
-    ActionCodeSettings actionCodeSettings = ActionCodeSettings(
-      url: 'https://your-app-link.com',
-      handleCodeInApp: true, // This will open the OTP in the app
-      iOSBundleId: 'com.example.ios',
-      androidPackageName: 'com.example.android',
-      androidInstallApp: true,
-      androidMinimumVersion: '12',
-    );
+    final url = Uri.parse('https://ses-server.onrender.com/api/v1/sendOtp');
+    final headers = {"Content-Type": "application/json"};
+    final body = jsonEncode({
+      "email": currentEmail,
+      "subject": "OTP for email change",
+      "length": "6"
+    });
 
     try {
-      // Send OTP to the current email
-      await _auth.sendSignInLinkToEmail(
-        email: currentEmail,
-        actionCodeSettings: actionCodeSettings,
-      );
-      Get.snackbar('OTP Sent', 'An OTP has been sent to your email');
-      _isOTPSent.value = true;
+      final response = await http.post(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        fetchOtp.value = responseData['otp'];
+        print("_otp value is :$fetchOtp");
+        _isOTPSent.value = true;
+        Get.snackbar(
+          'OTP Send',
+          'Otp send to $currentEmail',
+        );
+        startResendTimer();
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to send OTP. Please try again.',
+          backgroundColor: secondary,
+        );
+      }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to send OTP');
+      Get.snackbar(
+        'Error',
+        'Something went wrong. Please try again later.',
+      );
     }
   }
 
-  void showOTPSheet(BuildContext context, UserDataController userController,
+  // Show OTP sheet only when OTP is sent successfully
+  void showOTPSheet(BuildContext context, UserDataController userController,TextTheme theme,
       String newEmail) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          height: 250.h,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Enter OTP',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              SizedBox(height: 20.h),
-              ProfileTextFieldInput(
-                readonly: false,
-                textEditingController: _otpController,
-                hintText: 'Enter OTP',
-              ),
-              SizedBox(height: 20.h),
-              Container(
-                width: double.infinity,
-                height: 50.h,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: accent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
+    if (_isOTPSent.value) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              // height: 250.h,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.w),
+                    child: Text(
+                      'Enter OTP',
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
-                  onPressed: () async {
-                    await verifyOTP(userController, newEmail);
-                  },
-                  child: const Text(
-                    'Verify OTP',
-                    style: TextStyle(
-                      color: black,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(height: 20.h),
+                  ProfileTextFieldInput(
+                    readonly: false,
+                    textEditingController: _otpController,
+                    hintText: 'enter otp',
+                  ),
+                  SizedBox(height: 20.h),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50.h,
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: accent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      onPressed: () async {
+                        await verifyOTP(userController, newEmail);
+                      },
+                      child:  Text(
+                        'Verify OTP',
+                        style: theme.bodySmall
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(height: 10.h),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Obx(() => _isResendAllowed.value
+                        ? TextButton(
+                            onPressed: () async {
+                              _isOTPSent.value = false; // Reset OTP sent state
+                              await sendOTP(newEmail);
+                            },
+                            child: Text(
+                              'Resend OTP',
+                              style: theme
+                                  .bodySmall
+                                  ?.copyWith(color: white),
+                            ))
+                        : Text(
+                            'Resend available in $_resendTimer seconds',
+                            style: theme
+                                .bodySmall
+                                ?.copyWith(color: white),
+                          )),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      },
-    );
+            ),
+          );
+        },
+      ).whenComplete(() {
+        _otpController.clear();
+      });
+    }
   }
 
+  // Verify OTP
   Future<void> verifyOTP(
       UserDataController userController, String newEmail) async {
     String otp = _otpController.text.trim();
     try {
-      // Verify OTP
-      final credential = EmailAuthProvider.credential(
-        email: _auth.currentUser!.email!,
-        password: otp,
-      );
-      await _auth.currentUser!.reauthenticateWithCredential(credential);
+      print(fetchOtp.value);
+      print(otp);
 
-      // Update user's email in Firestore
-      await updateUserData(userController, newEmail);
-      Get.back(); // Close the bottom sheet
-      Get.snackbar('Success', 'Email updated successfully');
+      if (fetchOtp.value == otp.toString()) {
+        Get.snackbar('Success', 'Email updated successfully');
+      }
+      Future.delayed(Duration(seconds: 2), () {
+        Get.off(() => Profile());
+      });
+      // Close the bottom sheet
     } catch (e) {
       Get.snackbar('Error', 'Invalid OTP or email verification failed');
     }
   }
 
+  // Update User Data in Firestore
   Future<void> updateUserData(
       UserDataController userController, String newEmail) async {
     final uid = userController.userDocSnap.value?['uid'];
@@ -126,9 +193,7 @@ class ProfileController extends GetxController {
       DocumentReference clientDocRef = gymColRef.doc(uid);
 
       try {
-        await clientDocRef.update({
-          'email': newEmail,
-        });
+        await clientDocRef.update({'email': newEmail});
         DocumentSnapshot updatedDoc = await clientDocRef.get();
         userController.userDocSnap.value = updatedDoc;
       } catch (e) {
@@ -137,16 +202,36 @@ class ProfileController extends GetxController {
     }
   }
 
+  // Start resend timer for 30 seconds
+  void startResendTimer() {
+    _isResendAllowed.value = false;
+    _resendTimer.value = 30;
+
+    _timer?.cancel(); // Cancel any existing timers
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_resendTimer.value > 0) {
+        _resendTimer.value--;
+      } else {
+        _isResendAllowed.value = true;
+        _timer?.cancel();
+      }
+    });
+  }
+
+  // Handle file selection for image uploading
   selectFile() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
 
     final storageRef = FirebaseStorage.instance.ref();
-    final imageRef = storageRef.child("${authController.storedGymCode}/clients/${authController.storedUid}");
+    final imageRef = storageRef.child(
+        "${authController.storedGymCode}/clients/${authController.storedUid}");
     final imageBytes = await image.readAsBytes();
     await imageRef.putData(imageBytes);
-    
-    print("Image uploaded successfully to ${authController.storedGymCode}/clients/");
+
+    print(
+        "Image uploaded successfully to ${authController.storedGymCode}/clients/");
   }
 }

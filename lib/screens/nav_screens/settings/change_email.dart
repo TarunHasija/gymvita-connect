@@ -15,6 +15,7 @@ class ChangeEmailPage extends StatelessWidget {
   final TextEditingController otpController = TextEditingController();
   final RxBool isOTPSent = false.obs;
   final ProfileController profileController = Get.find<ProfileController>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Add Form key
 
   ChangeEmailPage({super.key});
 
@@ -42,56 +43,72 @@ class ChangeEmailPage extends StatelessWidget {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        child: Column(
-          children: [
-            TextfieldHeading(theme: theme, title: 'Current email'),
-            ProfileTextFieldInput(
-              readonly: true,
-              textEditingController: TextEditingController(
-                text: userController.userDocSnap.value?['email'],
-              ),
-              hintText: 'current email',
-            ),
-            TextfieldHeading(theme: theme, title: 'Enter new email'),
-            ProfileTextFieldInput(
-              readonly: false,
-              textEditingController: newEmailController,
-              hintText: 'Enter new email',
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 40.h),
-              height: 55.h,
-              width: double.infinity,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: accent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
+        child: Form(
+          key: _formKey, // Add Form
+          child: Column(
+            children: [
+              TextfieldHeading(theme: theme, title: 'Current email'),
+              ProfileTextFieldInput(
+                readonly: true,
+                textEditingController: TextEditingController(
+                  text: userController.userDocSnap.value?['email'],
                 ),
-                onPressed: () async {
-                  String newEmail = newEmailController.text.trim();
-                  if (newEmail.isNotEmpty) {
-                    // Send OTP
-                    await profileController.sendOTP(newEmail);
-                    // Show OTP bottom sheet
-                    profileController.showOTPSheet(
-                        context, userController, newEmail);
-                  } else {
-                    Get.snackbar('Error', 'Please enter a valid email');
-                  }
-                },
-                child: Text(
-                  "Submit",
-                  style: TextStyle(
-                    color: black,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                hintText: 'current email',
+              ),
+              TextfieldHeading(theme: theme, title: 'Enter new email'),
+              Expanded(
+                child: ProfileTextFieldInput(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter an email';
+                    }
+                    String emailPattern =
+                        r'^[a-zA-Z0-9]+([._%+-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(\.[a-zA-Z]{2,})+$';
+                    RegExp regex = RegExp(emailPattern);
+
+                    if (!regex.hasMatch(value)) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                  readonly: false,
+                  textEditingController: newEmailController,
+                  hintText: 'Enter new email',
                 ),
               ),
-            ),
-          ],
+              Container(
+                margin: EdgeInsets.only(top: 40.h),
+                height: 55.h,
+                width: double.infinity,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: accent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      String newEmail = newEmailController.text.trim();
+                      await profileController
+                          .sendOTP(userController.userDocSnap.value?['email']);
+                    
+                      profileController.showOTPSheet(
+                          context, userController, theme, newEmail);
+                    }
+                  },
+                  child: Text(
+                    "Send OTP",
+                    style: TextStyle(
+                      color: black,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

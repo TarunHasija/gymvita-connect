@@ -43,10 +43,8 @@ class _HomePageState extends State<HomePage> {
       resizeToAvoidBottomInset: true,
       body: RefreshIndicator(
         onRefresh: () {
-          return Future.delayed(Duration(seconds: 2),(){
-            setState(() {
-              
-            });
+          return Future.delayed(Duration(seconds: 2), () {
+            setState(() {});
           });
         },
         child: SafeArea(
@@ -181,10 +179,7 @@ class _HomePageState extends State<HomePage> {
                         }),
                         dashBoardCard('Profile', theme, MaterialSymbols.person,
                             () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Profile()));
+                          Get.to(() => Profile());
                         }),
                       ],
                     ),
