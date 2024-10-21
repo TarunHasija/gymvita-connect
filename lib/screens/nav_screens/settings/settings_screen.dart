@@ -4,10 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
+import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/pay_fee/payfee.dart';
 import 'package:gymvita_connect/screens/nav_screens/payment/payment_screen.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/help_screen.dart';
+import 'package:gymvita_connect/screens/nav_screens/settings/resetPassword/reset_password__screen.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
 import 'package:gymvita_connect/widgets/general/custom_bottom_sheet.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/profile.dart';
@@ -27,8 +29,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     TextTheme theme = Theme.of(context).textTheme;
     TextEditingController feedbackTitle = TextEditingController();
-    final UserDataController userController = Get.find();
-    final GymInfoController gymInfoController = Get.find();
+    final UserDataController userController = Get.find<UserDataController>();
+    final GymInfoController gymInfoController = Get.find<GymInfoController>();
     final AuthController authController = Get.find<AuthController>();
     TextEditingController feedbackMessage = TextEditingController();
 
@@ -109,8 +111,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           height: 5.h,
                         ),
                         Text(
-                          'Next Due Date : ' +
-                              userController.userDocSnap.value?['dueDate'],
+                          "Next Due Date ${userController.userDocSnap.value?['dueDate']}",
                           style: theme.displaySmall?.copyWith(
                               color: grey, fontWeight: FontWeight.w400),
                         ),
@@ -304,26 +305,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: MaterialSymbols.help,
                         title: 'Reset password',
                         ontap: () {
-                          showModalBottomSheet(
-                              context: context,
-                              backgroundColor: primary,
-                              isScrollControlled: true,
-                              builder: (BuildContext context) {
-                                return SingleChildScrollView(
-                                    child: Container(
-                                  padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom),
-                                  child: CustomBottomSheet(
-                                      cancelFunction: () {
-                                        Navigator.pop(context);
-                                      },
-                                      saveFunction: () {},
-                                      titleController: feedbackTitle,
-                                      messageController: feedbackMessage),
-                                ));
-                              });
+                          const ResetPasswordScreen();
                         }),
                     const Divider(
                       endIndent: 20,
@@ -364,7 +346,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: theme.labelSmall,
                   ),
                   Text(
-                    'Powered by Avyukt Solutions',
+                    'Powered by Aardo Solutions',
                     style: theme.labelSmall,
                   ),
                 ],

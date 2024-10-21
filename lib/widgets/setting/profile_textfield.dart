@@ -1,15 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 
-class ProfileTextFieldInput extends StatelessWidget {
+class CustomTextField extends StatelessWidget {
   final TextEditingController textEditingController;
   final String hintText;
   final bool? readonly;
   final FormFieldValidator<String>? validator;
 
-  const ProfileTextFieldInput({
+  const CustomTextField({
     super.key,
     required this.textEditingController,
     required this.hintText,

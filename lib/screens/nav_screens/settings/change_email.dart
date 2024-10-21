@@ -9,6 +9,8 @@ import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 import 'package:gymvita_connect/widgets/setting/text_heading.dart';
 
+//! _______Change email page rightnow not implemented_________
+
 class ChangeEmailPage extends StatelessWidget {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final TextEditingController newEmailController = TextEditingController();
@@ -48,7 +50,7 @@ class ChangeEmailPage extends StatelessWidget {
           child: Column(
             children: [
               TextfieldHeading(theme: theme, title: 'Current email'),
-              ProfileTextFieldInput(
+              CustomTextField(
                 readonly: true,
                 textEditingController: TextEditingController(
                   text: userController.userDocSnap.value?['email'],
@@ -57,7 +59,7 @@ class ChangeEmailPage extends StatelessWidget {
               ),
               TextfieldHeading(theme: theme, title: 'Enter new email'),
               Expanded(
-                child: ProfileTextFieldInput(
+                child: CustomTextField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter an email';
@@ -88,14 +90,14 @@ class ChangeEmailPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      String newEmail = newEmailController.text.trim();
-                      await profileController
-                          .sendOTP(userController.userDocSnap.value?['email']);
-                    
-                      profileController.showOTPSheet(
-                          context, userController, theme, newEmail);
-                    }
+                    // if (_formKey.currentState!.validate()) {
+                    //   String newEmail = newEmailController.text.trim();
+                    //   await profileController
+                    //       .sendOTP(userController.userDocSnap.value?['email']);
+
+                    //   profileController.showOTPSheet(
+                    //       context, userController, theme, newEmail);
+                    // }
                   },
                   child: Text(
                     "Send OTP",

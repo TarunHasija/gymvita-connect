@@ -4,10 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final VoidCallback ?onTap;
 
   const CustomAppBar({
     super.key,
-    required this.title,
+    required this.title, this.onTap,
   });
 
   @override
@@ -25,11 +26,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
        Padding(
          padding: const EdgeInsets.only(right:10.0),
-         child: Text(
-          title,
-          style: GoogleFonts.righteous(
-            textStyle: theme.displayMedium?.copyWith(fontSize: 24.sp), // Use a headline or another style from the theme
-          ),),
+         child: GestureDetector(
+          onTap: onTap,
+           child: Text(
+            title,
+            style: GoogleFonts.righteous(
+              textStyle: theme.displayMedium?.copyWith(fontSize: 24.sp), // Use a headline or another style from the theme
+            ),),
+         ),
        )
       ],
     );

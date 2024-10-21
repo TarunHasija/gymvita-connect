@@ -51,7 +51,7 @@ class UserDataController extends GetxController {
       } else {
         throw Exception("Document not found");
       }
-    });
+    }); 
   } catch (error) {
     print("Error fetching user data: ${error.toString()}");
   }

@@ -98,19 +98,14 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Clear the saved user credentials
     await prefs.clear();
-
-    // Optionally, clear any controllers
     await prefs.remove('email');
     await prefs.remove('password');
-
     emailController.clear();
-  passwordController.clear();
+    passwordController.clear();
 
-    // Navigate the user back to the login screen
     Get.offAll(
-        () => const LoginScreen()); // Replace with your actual login screen
+        () => const LoginScreen()); 
   }
 
   Future<Map<String, dynamic>?> authUser(String email) async {

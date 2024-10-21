@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
+import 'package:gymvita_connect/screens/nav_screens/settings/resetPassword/reset_password__screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/text_field.dart';
 
@@ -102,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerRight,
                       child: InkWell(
                         onTap: () {
-                          // Forgot Password Logic (if needed)
+                          Get.to(()=>ResetPasswordScreen());
                         },
                         child: Text(
                           'Forgot Password?',
@@ -113,32 +114,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 30.h),
                     // Login Button
                     InkWell(
-                          onTap: () {
-                            authController.handleLogin(
-                              context,
-                              authController.emailController,
-                              authController.passwordController,
-                            );
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(10.h),
-                            decoration: BoxDecoration(
-                              color: primary,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: IntrinsicWidth(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Login"),
-                                  SizedBox(width: 10.w),
-                                  Icon(Icons.arrow_forward_ios_rounded, size: 16.h),
-                                ],
-                              ),
-                            ),
+                      onTap: () {
+                        authController.handleLogin(
+                          context,
+                          authController.emailController,
+                          authController.passwordController,
+                        );
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(10.h),
+                        decoration: BoxDecoration(
+                          color: primary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: IntrinsicWidth(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Login"),
+                              SizedBox(width: 10.w),
+                              Icon(Icons.arrow_forward_ios_rounded, size: 16.h),
+                            ],
                           ),
                         ),
+                      ),
+                    ),
                     Flexible(flex: 1, child: Container()),
                     Align(
                       alignment: Alignment.bottomRight,
