@@ -44,11 +44,11 @@ class ProfileController extends GetxController {
     otpController.clear();
   }
 
-  final UserDataController userController = Get.find<UserDataController>();
+  final UserController userController = Get.find<UserController>();
   final AuthController authController = Get.find<AuthController>();
 
   Future<void> updateUserData(
-      UserDataController userController, String newEmail) async {
+      UserController userController, String newEmail) async {
     final uid = userController.userDocSnap.value?['uid'];
     final gymCode = userController.userDocSnap.value?['gymCode'];
 
@@ -86,52 +86,50 @@ class ProfileController extends GetxController {
     });
   }
 
+  selectFile(BuildContext context) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
 
-selectFile(BuildContext context) async {
-  try {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image == null) return;
+      final storageRef = FirebaseStorage.instance.ref();
+      final imageRef = storageRef.child(
+          "${authController.storedGymCode}/clients/${authController.storedUid}");
+      final imageBytes = await image.readAsBytes();
 
-    final storageRef = FirebaseStorage.instance.ref();
-    final imageRef = storageRef.child(
-        "${authController.storedGymCode}/clients/${authController.storedUid}");
-    final imageBytes = await image.readAsBytes();
+      // Upload the image
+      TaskSnapshot uploadTask = await imageRef.putData(imageBytes);
 
-    // Upload the image
-    TaskSnapshot uploadTask = await imageRef.putData(imageBytes);
+      String downloadUrl = await uploadTask.ref.getDownloadURL();
 
-    String downloadUrl = await uploadTask.ref.getDownloadURL();
+      await FirebaseFirestore.instance
+          .collection('clients')
+          .doc(authController.storedUid.value)
+          .update({
+        'imageUrl': downloadUrl,
+      });
 
-    await FirebaseFirestore.instance
-        .collection('clients')
-        .doc(authController.storedUid.value)
-        .update({
-      'imageUrl': downloadUrl,
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        backgroundColor: secondary,
-        content: Text(
-          "Image updated",
-          style: TextStyle(color: white),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: secondary,
+          content: Text(
+            "Image updated",
+            style: TextStyle(color: white),
+          ),
+          duration: Duration(seconds: 2),
         ),
-        duration: Duration(seconds: 2),
-      ),
-    );
+      );
 
-    // Optionally, you can call getUserData to refresh the user's data
-    userController.getUserData(authController.storedUid.value,
-        authController.storedGymCode.value);
+      // Optionally, you can call getUserData to refresh the user's data
+      userController.getUserData(
+          authController.storedUid.value, authController.storedGymCode.value);
 
-    print(
-        "Image uploaded successfully to ${authController.storedGymCode}/clients/");
-  } catch (e) {
-    print("Error uploading image: $e");
+      print(
+          "Image uploaded successfully to ${authController.storedGymCode}/clients/");
+    } catch (e) {
+      print("Error uploading image: $e");
+    }
   }
-}
-
 
   sendOtpForPassword(String email) async {
     final url = Uri.parse('https://ses-server.onrender.com/api/v1/sendOtp');

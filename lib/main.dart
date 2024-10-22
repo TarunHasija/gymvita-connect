@@ -22,7 +22,7 @@ void main() async {
   );
   Get.put(AuthController());
   Get.put(NutritionPlanController());
-  Get.put(UserDataController());
+  Get.put(UserController());
   Get.put(WorkoutPlanController());
   Get.put(GymInfoController());
   Get.put(ProfileController());
@@ -44,8 +44,8 @@ class MyApp extends StatelessWidget {
       builder: (_, child) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData
-          (primaryColor: primary,
+          theme: ThemeData(
+            primaryColor: primary,
             primarySwatch: Colors.grey,
             bottomNavigationBarTheme: BottomNavigationBarThemeData(
                 backgroundColor: primary,

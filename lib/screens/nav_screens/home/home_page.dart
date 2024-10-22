@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/constants/constants.dart';
 import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
+import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/home_graph_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/analysis_form_page.dart';
@@ -28,16 +29,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final UserDataController userDataController = Get.find<UserDataController>();
+  //! -------------Controllers
+
+  final UserController userController = Get.find<UserController>();
+  final AuthController authController = Get.find<AuthController>();
   final MonthlyAnalysisController analysisController =
       Get.find<MonthlyAnalysisController>();
   final HomeGraphController homeGraphController =
       Get.find<HomeGraphController>();
+  TextEditingController feedbackTitle = TextEditingController();
+  TextEditingController feedbackMessage = TextEditingController();
   @override
   Widget build(BuildContext context) {
     TextTheme theme = Theme.of(context).textTheme;
-    TextEditingController feedbackTitle = TextEditingController();
-    TextEditingController feedbackMessage = TextEditingController();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -59,8 +63,20 @@ class _HomePageState extends State<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
+                          backgroundColor: secondary,
                           radius: 26.r,
-                          child: Image.asset('assets/images/loginlogo.png'),
+                          backgroundImage: (userController.userDocSnap
+                                          .value?['details.image'] ==
+                                      null ||
+                                  userController.userDocSnap
+                                          .value!['details.image'] ==
+                                      "")
+                              ? const AssetImage(
+                                  'assets/images/defaultprofile.png')
+                              : NetworkImage(userController.userDocSnap
+                                  .value!['details.image']) as ImageProvider,
+                          onBackgroundImageError: (_, __) => const AssetImage(
+                              'assets/images/defaultprofile.png'),
                         ),
                         SizedBox(
                           width: 8.w,
@@ -71,22 +87,24 @@ class _HomePageState extends State<HomePage> {
                             //! -----name-----
                             Obx(() {
                               return Text(
-                                "Hi ${userDataController.userDocSnap.value?['details.name']} 👋🏻",
+                                "Hi ${userController.userDocSnap.value?['details.name']} 👋🏻",
                                 style: theme.bodyMedium,
                               );
                             }),
-                            Obx(() => 
-                             userDataController
-                                      .userDocSnap.value?['services'][0]==null?
-                            Text('No service', style: theme.displaySmall
-                                      ?.copyWith(color: white),):Text(
-                                  userDataController
-                                      .userDocSnap.value?['services'][0],
-                                  style: theme.displaySmall
-                                      ?.copyWith(color: white),
-                                )
-                                
-                                ),
+                            Obx(() => userController
+                                        .userDocSnap.value?['services'][0] ==
+                                    null
+                                ? Text(
+                                    'No service',
+                                    style: theme.displaySmall
+                                        ?.copyWith(color: white),
+                                  )
+                                : Text(
+                                    userController
+                                        .userDocSnap.value?['services'][0],
+                                    style: theme.displaySmall
+                                        ?.copyWith(color: white),
+                                  )),
                           ],
                         ),
                         Flexible(
@@ -106,10 +124,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-      
+
                 SizedBox(height: 10.h),
                 Text('My Dashboard', style: theme.bodySmall),
-      
+
                 // GridView for cards
                 Padding(
                   padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
@@ -136,16 +154,14 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const WorkOutPlanPage()));
+                                builder: (context) => const WorkOutPlanPage()));
                       }),
                       dashBoardCard(
                           'Analysis', theme, FontAwesomeIcons.chartArea, () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const AnalysisScreen()));
+                                builder: (context) => const AnalysisScreen()));
                       }),
                       dashBoardCard(
                           'Pay fee', theme, MaterialSymbols.credit_card, () {
@@ -167,11 +183,7 @@ class _HomePageState extends State<HomePage> {
                                     bottom: MediaQuery.of(context)
                                         .viewInsets
                                         .bottom),
-                                child: CustomBottomSheet(
-                                    cancelFunction: () {
-                                      Navigator.pop(context);
-                                    },
-                                    saveFunction: () {},
+                                child: FeedbackBottomSheet(
                                     titleController: feedbackTitle,
                                     messageController: feedbackMessage),
                               ));
@@ -187,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 10.h,
                 ),
-      
+
                 // Update your Monthly Progress button
                 InkWell(
                   onTap: () {
@@ -220,14 +232,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-      
+
                 SizedBox(height: 20.h),
-      
+
                 // Weight Text
                 Text("My Analysis", style: theme.headlineSmall),
-      
+
                 SizedBox(height: 10.h),
-      
+
                 SizedBox(
                   height: 35.h, // Set height for the horizontal ListView
                   child: ListView(
@@ -272,18 +284,18 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-      
+
                 SizedBox(height: 20.h),
-      
+
                 // Display graph based on selected body part
                 Obx(() {
                   String selectedBodyPart =
                       homeGraphController.selectedBodyPart.value;
-      
+
                   // Retrieve graph limits for the selected body part from the GraphLimits map
                   final bodyPartData =
                       GraphLimits.bodyPartLimits[selectedBodyPart];
-      
+
                   // Convert upperLimit and lowerLimit to double to avoid the type issue
                   double upperLimit =
                       (bodyPartData?['upperLimit'] as num)?.toDouble() ??
@@ -293,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                           GraphLimits.defaultLowerLimit;
                   String unit =
                       bodyPartData?['unit'] ?? GraphLimits.defaultUnit;
-      
+
                   return CurrentSixMonthGraph(
                     bodyPartName: selectedBodyPart,
                     upperLimit: upperLimit,
@@ -301,7 +313,7 @@ class _HomePageState extends State<HomePage> {
                     leftSideTitle: unit,
                   );
                 }),
-      
+
                 SizedBox(
                   height: 20.h,
                 ),

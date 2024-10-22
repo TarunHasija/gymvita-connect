@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final AuthController authController = Get.find<AuthController>();
-  final UserDataController userController = Get.find<UserDataController>();
+  final UserController userController = Get.find<UserController>();
 
   bool _showPassword = false;
 

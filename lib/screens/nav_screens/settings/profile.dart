@@ -13,7 +13,7 @@ import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 class Profile extends StatelessWidget {
   Profile({super.key});
 
-  final UserDataController userController = Get.find<UserDataController>();
+  final UserController userController = Get.find<UserController>();
 
   // TextEditingControllers
   final TextEditingController nameController = TextEditingController();
@@ -82,30 +82,30 @@ class Profile extends StatelessWidget {
                 child: Column(
                   children: [
                     //! Profile Image
-                    Obx(
-                      () => Stack(
+                     Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          Obx(() {
-                            return CircleAvatar(
-                              backgroundColor: secondary,
-                              radius: 52.r,
-                              backgroundImage: (userController.userDocSnap
-                                              .value?['details.image'] ==
-                                          null ||
-                                      userController.userDocSnap
-                                              .value!['details.image'] ==
-                                          "")
-                                  ? const AssetImage(
-                                      'assets/images/defaultprofile.png')
-                                  : NetworkImage(userController
-                                          .userDocSnap.value!['details.image'])
-                                      as ImageProvider,
-                              onBackgroundImageError: (_, __) =>
-                                  const AssetImage(
-                                      'assets/images/defaultprofile.png'),
-                            );
-                          }),
+                          Obx(()=>
+                             CircleAvatar(
+                                backgroundColor: secondary,
+                                radius: 52.r,
+                                backgroundImage: (userController.userDocSnap
+                                                .value?['details.image'] ==
+                                            null ||
+                                        userController.userDocSnap
+                                                .value!['details.image'] ==
+                                            "")
+                                    ? const AssetImage(
+                                        'assets/images/defaultprofile.png')
+                                    : NetworkImage(userController
+                                            .userDocSnap.value!['details.image'])
+                                        as ImageProvider,
+                                onBackgroundImageError: (_, __) =>
+                                    const AssetImage(
+                                        'assets/images/defaultprofile.png'),
+                              ),
+                          ),
+
                           Positioned(
                             bottom: -5.h,
                             right: 8.h,
@@ -129,7 +129,7 @@ class Profile extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
+                    
 
                     //! Input fields
                     SizedBox(height: 50.h),

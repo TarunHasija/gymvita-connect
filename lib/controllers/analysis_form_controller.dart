@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 
 class MonthlyAnalysisController extends GetxController {
-  final UserDataController userController = Get.find<UserDataController>();
+  final UserController userController = Get.find<UserController>();
 
   // TextEditingControllers
   final weightController = TextEditingController();
@@ -21,7 +21,7 @@ class MonthlyAnalysisController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadAnalysisData(); 
+    loadAnalysisData();
   }
 
   Future<void> loadAnalysisData() async {
@@ -30,14 +30,16 @@ class MonthlyAnalysisController extends GetxController {
     if (userDocSnap != null && userDocSnap.exists) {
       final data = userDocSnap.data();
       if (data is Map<String, dynamic>) {
-        Map<String, dynamic>? monthlyAnalysis = data['monthlyAnalysis'] as Map<String, dynamic>?;
+        Map<String, dynamic>? monthlyAnalysis =
+            data['monthlyAnalysis'] as Map<String, dynamic>?;
 
         if (monthlyAnalysis != null) {
           DateTime now = DateTime.now();
           String year = now.year.toString();
           String month = _getMonthName(now.month);
 
-          if (monthlyAnalysis[year] != null && monthlyAnalysis[year][month] != null) {
+          if (monthlyAnalysis[year] != null &&
+              monthlyAnalysis[year][month] != null) {
             final analysis = monthlyAnalysis[year][month];
 
             weightController.text = analysis['weight'].toString();
@@ -78,7 +80,8 @@ class MonthlyAnalysisController extends GetxController {
 
     final data = userDocSnap.data();
     if (data is Map<String, dynamic>) {
-      Map<String, dynamic>? monthlyAnalysis = data['monthlyAnalysis'] as Map<String, dynamic>?;
+      Map<String, dynamic>? monthlyAnalysis =
+          data['monthlyAnalysis'] as Map<String, dynamic>?;
 
       if (monthlyAnalysis != null &&
           monthlyAnalysis[year] != null &&
@@ -105,7 +108,8 @@ class MonthlyAnalysisController extends GetxController {
           }
         }, SetOptions(merge: true));
 
-        DocumentSnapshot? updatedDocSnap = await userController.userDocRef.value?.get();
+        DocumentSnapshot? updatedDocSnap =
+            await userController.userDocRef.value?.get();
 
         if (updatedDocSnap != null) {
           userController.userDocSnap.value = updatedDocSnap;
@@ -127,16 +131,36 @@ class MonthlyAnalysisController extends GetxController {
 
   String _getMonthName(int month) {
     const List<String> months = [
-      'jan', 'feb', 'mar', 'apr', 'may', 'jun',
-      'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec'
     ];
     return months[month - 1];
   }
 
   int _getMonthNumber(String monthName) {
     const List<String> months = [
-      'jan', 'feb', 'mar', 'apr', 'may', 'jun',
-      'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+      'jan',
+      'feb',
+      'mar',
+      'apr',
+      'may',
+      'jun',
+      'jul',
+      'aug',
+      'sep',
+      'oct',
+      'nov',
+      'dec'
     ];
     return months.indexOf(monthName) + 1;
   }

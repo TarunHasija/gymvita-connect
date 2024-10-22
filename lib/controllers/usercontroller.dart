@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 
-class UserDataController extends GetxController {
+class UserController extends GetxController {
   final usergymCode = ''.obs;
   final userName = ''.obs;
   final userUid = ''.obs;
@@ -30,32 +30,31 @@ class UserDataController extends GetxController {
     }
   }
 
- Future<void> getUserData(String uid, String gymCode) async {
-  print("$uid----------$gymCode");
+  Future<void> getUserData(String uid, String gymCode) async {
+    print("$uid----------$gymCode");
 
-  CollectionReference userCollection = FirebaseFirestore.instance
-      .collection(gymCode)
-      .doc('clients')
-      .collection('clients');
-  DocumentReference clientDocRef = userCollection.doc(uid);
-  userDocRef.value = clientDocRef;
+    CollectionReference userCollection = FirebaseFirestore.instance
+        .collection(gymCode)
+        .doc('clients')
+        .collection('clients');
+    DocumentReference clientDocRef = userCollection.doc(uid);
+    userDocRef.value = clientDocRef;
 
-  try {
-    // Listen for real-time updates using snapshots()
-    clientDocRef.snapshots().listen((DocumentSnapshot docSnapshot) {
-      if (docSnapshot.exists) {
-        userDocSnap.value = docSnapshot; // Update the userDocSnap with the new data
-        print(userDocSnap.value?['email']); // Example: print email to debug
+    try {
+      clientDocRef.snapshots().listen((DocumentSnapshot docSnapshot) {
+        if (docSnapshot.exists) {
+          userDocSnap.value = docSnapshot;
+          print(userDocSnap.value?['email']);
 
-        print('Document exists and updated in real-time');
-      } else {
-        throw Exception("Document not found");
-      }
-    }); 
-  } catch (error) {
-    print("Error fetching user data: ${error.toString()}");
+          print('Document exists and updated in real-time');
+        } else {
+          throw Exception("Document not found");
+        }
+      });
+    } catch (error) {
+      print("Error fetching user data: ${error.toString()}");
+    }
   }
-}
 
   Future<void> updateUserData({
     required String name,
@@ -103,6 +102,36 @@ class UserDataController extends GetxController {
       } catch (e) {
         Get.snackbar('Error', 'Failed to update profile');
       }
+    }
+  }
+
+  Future<void> submitFeedback(
+      String gymCode, String userId, String title, String message) async {
+    final gymDocRef =
+        FirebaseFirestore.instance.collection(gymCode).doc('feedback');
+
+    final feedbackObject = {
+      'userId': userId,
+      'date': DateTime.now(),
+      'title': title.isNotEmpty ? title : null,
+      'message': message,
+    };
+
+    try {
+      DocumentSnapshot docSnapshot = await gymDocRef.get();
+      if (!docSnapshot.exists) {
+        await gymDocRef.set({
+          'feedback': [feedbackObject],
+        });
+        print('Feedback document created and feedback submitted successfully!');
+      } else {
+        await gymDocRef.update({
+          'feedback': FieldValue.arrayUnion([feedbackObject]),
+        });
+        print('Feedback submitted successfully!');
+      }
+    } catch (error) {
+      print('Error submitting feedback: $error');
     }
   }
 }

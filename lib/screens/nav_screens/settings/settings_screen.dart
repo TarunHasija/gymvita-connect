@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     TextTheme theme = Theme.of(context).textTheme;
     TextEditingController feedbackTitle = TextEditingController();
-    final UserDataController userController = Get.find<UserDataController>();
+    final UserController userController = Get.find<UserController>();
     final GymInfoController gymInfoController = Get.find<GymInfoController>();
     final AuthController authController = Get.find<AuthController>();
     TextEditingController feedbackMessage = TextEditingController();
@@ -286,13 +286,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       bottom: MediaQuery.of(context)
                                           .viewInsets
                                           .bottom),
-                                  child: CustomBottomSheet(
-                                      cancelFunction: () {
-                                        Navigator.pop(context);
-                                      },
-                                      saveFunction: () {},
-                                      titleController: feedbackTitle,
-                                      messageController: feedbackMessage),
+                                  child: FeedbackBottomSheet(
+                                    titleController: feedbackTitle,
+                                    messageController: feedbackMessage),
                                 ));
                               });
                         }),

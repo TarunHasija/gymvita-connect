@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'dart:collection';
 
 class AnalysisGraphController extends GetxController {
-  final UserDataController userController = Get.find<UserDataController>();
+  final UserController userController = Get.find<UserController>();
 
   List<Map<String, String>> getMonthsAndYears(
       int startMonthOffset, int numberOfMonths) {

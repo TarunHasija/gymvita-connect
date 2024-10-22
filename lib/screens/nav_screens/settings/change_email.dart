@@ -23,7 +23,7 @@ class ChangeEmailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserDataController userController = Get.find<UserDataController>();
+    final UserController userController = Get.find<UserController>();
     TextTheme theme = Theme.of(context).textTheme;
 
     return Scaffold(

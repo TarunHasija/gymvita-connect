@@ -13,7 +13,7 @@ class NutritionPlanPage extends StatefulWidget {
 }
 
 class _NutritionPlanPageState extends State<NutritionPlanPage> {
-  final UserDataController userDataController = Get.find<UserDataController>();
+  final UserController userController = Get.find<UserController>();
   final NutritionPlanController nutritionplanController =
       Get.find<NutritionPlanController>();
 
