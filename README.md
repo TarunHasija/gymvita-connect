@@ -18,9 +18,9 @@ GymVita Connect transforms fitness into a community-driven journey, empowering m
 
 ### Preview:
 
-<img src="https://github.com/user-attachments/assets/b4cc0a18-45a9-419c-82c4-4c1b4f1d811c" alt="Image 1" width="300" />
-<img src="https://github.com/user-attachments/assets/d4199c97-8342-4bd8-9ead-406c0c86113f" alt="Image 2" width="300" />
-<img src="https://github.com/user-attachments/assets/9da7dc3f-7ae8-43dd-8a28-0e9a8d57033c" alt="Image 3" width="300" />
-<img src="https://github.com/user-attachments/assets/63df46a1-9e3e-43bd-8487-6645922a6df9" alt="Image 4" width="300" />
-<img src="https://github.com/user-attachments/assets/e20178c7-1e6b-46b6-92b3-04060a7e3012" alt="Image 5" width="300" />
-<img src="https://github.com/user-attachments/assets/42930071-7d58-426c-80ff-5dec605b316b" alt="Image 6" width="300" />
+<img src="https://github.com/user-attachments/assets/b4cc0a18-45a9-419c-82c4-4c1b4f1d811c" alt="Image 1" width="250" />
+<img src="https://github.com/user-attachments/assets/d4199c97-8342-4bd8-9ead-406c0c86113f" alt="Image 2" width="250" />
+<img src="https://github.com/user-attachments/assets/9da7dc3f-7ae8-43dd-8a28-0e9a8d57033c" alt="Image 3" width="250" />
+<img src="https://github.com/user-attachments/assets/63df46a1-9e3e-43bd-8487-6645922a6df9" alt="Image 4" width="250" />
+<img src="https://github.com/user-attachments/assets/e20178c7-1e6b-46b6-92b3-04060a7e3012" alt="Image 5" width="250" />
+<img src="https://github.com/user-attachments/assets/42930071-7d58-426c-80ff-5dec605b316b" alt="Image 6" width="250" />
