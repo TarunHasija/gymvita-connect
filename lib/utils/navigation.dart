@@ -9,6 +9,7 @@ void navigateWithAnimation(
 }) {
   PageRouteBuilder _createRoute() {
     return PageRouteBuilder(
+      
       pageBuilder: (context, animation, secondaryAnimation) => destinationPage,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         switch (transitionType) {

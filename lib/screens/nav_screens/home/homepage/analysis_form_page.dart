@@ -32,21 +32,21 @@ class AnalysisForm extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 12.h),
                 child: Text("Please Enter valid Data"),
               ):SizedBox(),
-              _buildInputField(theme, analysisController.weightController,
+              buildInputField(theme, analysisController.weightController,
                   'Weight (Kg)', 'Enter your weight'),
-              _buildInputField(theme, analysisController.heightController,
+              buildInputField(theme, analysisController.heightController,
                   'Height (cm)', 'Enter your height'),
-              _buildInputField(theme, analysisController.bicepController,
+              buildInputField(theme, analysisController.bicepController,
                   'Bicep (cm)', 'Enter your bicep size'),
-              _buildInputField(theme, analysisController.hipsController,
+              buildInputField(theme, analysisController.hipsController,
                   'Hips (cm)', 'Enter your hip size'),
-              _buildInputField(theme, analysisController.thighsController,
+              buildInputField(theme, analysisController.thighsController,
                   'Thighs (cm)', 'Enter your thigh size'),
-              _buildInputField(theme, analysisController.waistController,
+              buildInputField(theme, analysisController.waistController,
                   'Waist (cm)', 'Enter your waist size'),
-              _buildInputField(theme, analysisController.chestController,
+              buildInputField(theme, analysisController.chestController,
                   'Chest (cm)', 'Enter your chest size'),
-              _buildInputField(theme, analysisController.tricepController,
+              buildInputField(theme, analysisController.tricepController,
                   'Tricep (cm)', 'Enter your tricep size'),
 
               const SizedBox(height: 20),
@@ -84,7 +84,7 @@ class AnalysisForm extends StatelessWidget {
     );
   }
 
-  Widget _buildInputField(TextTheme theme, TextEditingController controller,
+  Widget buildInputField(TextTheme theme, TextEditingController controller,
       String label, String hint,) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),

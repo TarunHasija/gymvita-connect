@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/utils/colors.dart';
-import 'package:gymvita_connect/widgets/custom_txt_button.dart';
+import 'package:gymvita_connect/widgets/components/custom_txt_button.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 
 class EmailScreen extends StatelessWidget {
@@ -13,7 +14,6 @@ class EmailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         CustomTextField(
@@ -41,13 +41,23 @@ class EmailScreen extends StatelessWidget {
             if (controller.resetPasEmailController.text.isNotEmpty &&
                 RegExp(r'^[a-zA-Z0-9]+([._%+-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(\.[a-zA-Z]{2,})+$')
                     .hasMatch(controller.resetPasEmailController.text)) {
-              await controller.sendOtpForPassword(controller.resetPasEmailController.text);
-              controller.pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
+              // Await the result of checkUserExists
+              bool userExists = await controller
+                  .checkUserExists(controller.resetPasEmailController.text);
+
+              if (userExists) {
+                await controller.sendOtpForPassword(
+                    controller.resetPasEmailController.text);
+
+                controller.pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              } else {
+                Get.snackbar("User Not Found",
+                    "User for this email doesn't exist, please contact the gym owner");
+              }
             } else {
-              // Show error message
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(

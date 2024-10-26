@@ -5,7 +5,7 @@ import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/resetPassword/reset_password__screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
-import 'package:gymvita_connect/widgets/text_field.dart';
+import 'package:gymvita_connect/widgets/components/text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

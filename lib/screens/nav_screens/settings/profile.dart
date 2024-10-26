@@ -5,9 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
-import 'package:gymvita_connect/screens/nav_screens/settings/change_email.dart';
 import 'package:gymvita_connect/utils/colors.dart';
-import 'package:gymvita_connect/widgets/custom_txt_button.dart';
+import 'package:gymvita_connect/widgets/components/custom_txt_button.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 
 class Profile extends StatelessWidget {
@@ -49,8 +48,8 @@ class Profile extends StatelessWidget {
         ),
       ),
       body: RefreshIndicator(
-        onRefresh: () => Future.delayed(const Duration(seconds: 2), () {
-          userController.getUserData(authController.storedUid.value,
+        onRefresh: () => Future.delayed(const Duration(seconds: 2), () async {
+          await userController.getUserData(authController.storedUid.value,
               authController.storedGymCode.value);
         }),
         child: Obx(
@@ -82,54 +81,51 @@ class Profile extends StatelessWidget {
                 child: Column(
                   children: [
                     //! Profile Image
-                     Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Obx(()=>
-                             CircleAvatar(
-                                backgroundColor: secondary,
-                                radius: 52.r,
-                                backgroundImage: (userController.userDocSnap
-                                                .value?['details.image'] ==
-                                            null ||
-                                        userController.userDocSnap
-                                                .value!['details.image'] ==
-                                            "")
-                                    ? const AssetImage(
-                                        'assets/images/defaultprofile.png')
-                                    : NetworkImage(userController
-                                            .userDocSnap.value!['details.image'])
-                                        as ImageProvider,
-                                onBackgroundImageError: (_, __) =>
-                                    const AssetImage(
-                                        'assets/images/defaultprofile.png'),
-                              ),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Obx(
+                          () => CircleAvatar(
+                            backgroundColor: secondary,
+                            radius: 52.r,
+                            backgroundImage: (userController.userDocSnap
+                                            .value?['details.image'] ==
+                                        null ||
+                                    userController.userDocSnap
+                                            .value!['details.image'] ==
+                                        "")
+                                ? const AssetImage(
+                                    'assets/images/defaultprofile.png')
+                                : NetworkImage(
+                                    "${userController.userDocSnap.value!['details.image']}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
+                                  ) as ImageProvider,
+                            onBackgroundImageError: (_, __) => const AssetImage(
+                                'assets/images/defaultprofile.png'),
                           ),
-
-                          Positioned(
-                            bottom: -5.h,
-                            right: 8.h,
-                            child: GestureDetector(
-                              onTap: () {
-                                profileController.selectFile(context);
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(8.h),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.edit,
-                                  size: 20.h,
-                                  color: Colors.black,
-                                ),
+                        ),
+                        Positioned(
+                          bottom: -5.h,
+                          right: 8.h,
+                          child: GestureDetector(
+                            onTap: () {
+                              profileController.selectFile(context);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(8.h),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.edit,
+                                size: 20.h,
+                                color: Colors.black,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    
+                        ),
+                      ],
+                    ),
 
                     //! Input fields
                     SizedBox(height: 50.h),

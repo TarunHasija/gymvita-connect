@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/utils/colors.dart';
-import 'package:gymvita_connect/widgets/custom_txt_button.dart';
+import 'package:gymvita_connect/widgets/components/custom_txt_button.dart';
 import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 
 class OTPScreen extends StatelessWidget {

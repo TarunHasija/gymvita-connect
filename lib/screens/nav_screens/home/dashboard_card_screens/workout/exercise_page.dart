@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gymvita_connect/widgets/appbar.dart';
+import 'package:gymvita_connect/widgets/components/appbar.dart';
 import 'package:gymvita_connect/widgets/home/dashboard/exercise_tile.dart';
 
 class ExercisePage extends StatelessWidget {

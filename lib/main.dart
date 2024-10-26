@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
 import 'package:gymvita_connect/controllers/analysis_graph_controller.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
+import 'package:gymvita_connect/controllers/featured_content_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
 import 'package:gymvita_connect/controllers/home_graph_controller.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
@@ -13,17 +14,21 @@ import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/controllers/workout_plan_controller.dart';
 import 'package:gymvita_connect/firebase_options.dart';
 import 'package:gymvita_connect/screens/onboardingScreens/splash_screen.dart';
+import 'package:gymvita_connect/services/notification_service.dart';
 import 'package:gymvita_connect/utils/colors.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // NotificationService().initNotification();
+  tz.initializeTimeZones();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   Get.put(AuthController());
-  Get.put(NutritionPlanController());
   Get.put(UserController());
   Get.put(WorkoutPlanController());
+  Get.put(NutritionPlanController());
   Get.put(GymInfoController());
   Get.put(ProfileController());
   Get.put(MonthlyAnalysisController());

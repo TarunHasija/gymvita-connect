@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:gymvita_connect/constants/constants.dart';
 import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
+import 'package:gymvita_connect/controllers/featured_content_controller.dart';
 import 'package:gymvita_connect/controllers/home_graph_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
-import 'package:gymvita_connect/screens/nav_screens/home/analysis_form_page.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/homepage/analysis_form_page.dart';
 import 'package:gymvita_connect/widgets/analysis/graphs/current_sixmonth_graph.dart';
 import 'package:gymvita_connect/widgets/general/custom_bottom_sheet.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/nutrition_plan/nutrition_plan.dart';
@@ -20,6 +24,7 @@ import 'package:flutter_material_symbols/flutter_material_symbols.dart';
 import 'package:gymvita_connect/utils/colors.dart';
 import 'package:gymvita_connect/widgets/home/dashboard/dashboard_card.dart';
 import 'package:gymvita_connect/widgets/home/homegraph_card.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,8 +34,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //! -------------Controllers
-
   final UserController userController = Get.find<UserController>();
   final AuthController authController = Get.find<AuthController>();
   final MonthlyAnalysisController analysisController =
@@ -42,6 +45,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     TextTheme theme = Theme.of(context).textTheme;
+    final FeaturedContentController featuredContentController =
+        Get.find<FeaturedContentController>();
+
+    NutritionPlanController().fetchNutritionPlan();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -53,7 +60,6 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                //!-------AppBar------
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 10.h),
                   decoration: const BoxDecoration(color: primary),
@@ -62,21 +68,24 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          backgroundColor: secondary,
-                          radius: 26.r,
-                          backgroundImage: (userController.userDocSnap
-                                          .value?['details.image'] ==
-                                      null ||
-                                  userController.userDocSnap
-                                          .value!['details.image'] ==
-                                      "")
-                              ? const AssetImage(
-                                  'assets/images/defaultprofile.png')
-                              : NetworkImage(userController.userDocSnap
-                                  .value!['details.image']) as ImageProvider,
-                          onBackgroundImageError: (_, __) => const AssetImage(
-                              'assets/images/defaultprofile.png'),
+                        GestureDetector(
+                          onTap: () => Get.to(() => Profile()),
+                          child: CircleAvatar(
+                            backgroundColor: secondary,
+                            radius: 26.r,
+                            backgroundImage: (userController.userDocSnap
+                                            .value?['details.image'] ==
+                                        null ||
+                                    userController.userDocSnap
+                                            .value!['details.image'] ==
+                                        "")
+                                ? const AssetImage(
+                                    'assets/images/defaultprofile.png')
+                                : NetworkImage(userController.userDocSnap
+                                    .value!['details.image']) as ImageProvider,
+                            onBackgroundImageError: (_, __) => const AssetImage(
+                                'assets/images/defaultprofile.png'),
+                          ),
                         ),
                         SizedBox(
                           width: 8.w,
@@ -84,7 +93,6 @@ class _HomePageState extends State<HomePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            //! -----name-----
                             Obx(() {
                               return Text(
                                 "Hi ${userController.userDocSnap.value?['details.name']} 👋🏻",
@@ -124,11 +132,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 10.h),
-                Text('My Dashboard', style: theme.bodySmall),
-
-                // GridView for cards
+                Text('My Dashboard', style: theme.headlineSmall),
                 Padding(
                   padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
                   child: GridView(
@@ -199,8 +204,6 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 10.h,
                 ),
-
-                // Update your Monthly Progress button
                 InkWell(
                   onTap: () {
                     setState(() {});
@@ -232,20 +235,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-
-                SizedBox(height: 20.h),
-
-                // Weight Text
+                Gap(30.h),
                 Text("My Analysis", style: theme.headlineSmall),
-
                 SizedBox(height: 10.h),
-
                 SizedBox(
-                  height: 35.h, // Set height for the horizontal ListView
+                  height: 35.h,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
-                      // Only wrap each card individually with Obx
                       HomegraphCard(
                           title: 'Weight',
                           theme: theme,
@@ -284,25 +281,21 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-
                 SizedBox(height: 20.h),
-
-                // Display graph based on selected body part
                 Obx(() {
                   String selectedBodyPart =
                       homeGraphController.selectedBodyPart.value;
 
-                  // Retrieve graph limits for the selected body part from the GraphLimits map
                   final bodyPartData =
                       GraphLimits.bodyPartLimits[selectedBodyPart];
 
-                  // Convert upperLimit and lowerLimit to double to avoid the type issue
                   double upperLimit =
-                      (bodyPartData?['upperLimit'] as num)?.toDouble() ??
+                      (bodyPartData?['upperLimit'] as num?)?.toDouble() ??
                           GraphLimits.defaultUpperLimit;
                   double lowerLimit =
-                      (bodyPartData?['lowerLimit'] as num)?.toDouble() ??
+                      (bodyPartData?['lowerLimit'] as num?)?.toDouble() ??
                           GraphLimits.defaultLowerLimit;
+
                   String unit =
                       bodyPartData?['unit'] ?? GraphLimits.defaultUnit;
 
@@ -313,10 +306,7 @@ class _HomePageState extends State<HomePage> {
                     leftSideTitle: unit,
                   );
                 }),
-
-                SizedBox(
-                  height: 20.h,
-                ),
+                Gap(30.h),
                 Text(
                   "Featured Videos",
                   style: theme.headlineSmall,
@@ -324,28 +314,45 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 10.h,
                 ),
-                Container(
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/gym.png'),
-                        fit: BoxFit.cover),
-                  ),
-                  height: 200.h,
-                  width: double.infinity,
-                ),
+
+                //!-------Yotube video -------------
+
+                Obx(() => Container(
+                      decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10.r)),
+                      child: featuredContentController
+                                  .youtubePlayerController.value !=
+                              null
+                          ? YoutubePlayer(
+                              controller: featuredContentController
+                                  .youtubePlayerController.value!,
+                              showVideoProgressIndicator: true,
+                              progressIndicatorColor: Colors.red,
+                              onReady: () {
+                                print("Player is ready");
+                              },
+                            )
+                          : Center(
+                              child: Text(
+                                  "Content Loading..."), // Show loading indicator until the controller is initialized
+                            ),
+                    )),
+
                 SizedBox(
                   height: 10.h,
                 ),
                 Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Pushups",
-                      style: theme.titleSmall,
-                    )),
-                SizedBox(
-                  height: 10.h,
+                  alignment: Alignment.centerLeft,
+                  child: Obx(
+                    () => Text(
+                      featuredContentController.youtubeVideoTitle.value,
+                      style: theme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.w300),
+                    ),
+                  ),
                 ),
+                SizedBox(height: 20.h),
                 Text(
                   "Recommended workout plan",
                   style: theme.headlineSmall,

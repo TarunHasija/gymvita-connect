@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gymvita_connect/utils/colors.dart';
-import 'package:gymvita_connect/widgets/appbar.dart';
+import 'package:gymvita_connect/widgets/components/appbar.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});

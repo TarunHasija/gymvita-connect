@@ -3,15 +3,16 @@ import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 
 class UserController extends GetxController {
-  final usergymCode = ''.obs;
-  final userName = ''.obs;
-  final userUid = ''.obs;
-  final email = ''.obs;
+  final RxString usergymCode = ''.obs;
+  final RxString userName = ''.obs;
+  final RxString userUid = ''.obs;
+  final RxString userEmail = ''.obs;
+  RxString userImg = ''.obs;
   var userDocRef = Rx<DocumentReference?>(null);
   final userDocSnap = Rx<DocumentSnapshot?>(null);
   //!userdata snapshot
 
-  final authController = Get.find<AuthController>();
+  final AuthController authController = Get.find<AuthController>();
 
   @override
   void onInit() {
@@ -33,7 +34,7 @@ class UserController extends GetxController {
   Future<void> getUserData(String uid, String gymCode) async {
     print("$uid----------$gymCode");
 
-    CollectionReference userCollection = FirebaseFirestore.instance
+    CollectionReference userCollection = await FirebaseFirestore.instance
         .collection(gymCode)
         .doc('clients')
         .collection('clients');
@@ -45,6 +46,7 @@ class UserController extends GetxController {
         if (docSnapshot.exists) {
           userDocSnap.value = docSnapshot;
           print(userDocSnap.value?['email']);
+          userImg.value = userDocSnap.value?['details.image'];
 
           print('Document exists and updated in real-time');
         } else {
@@ -134,4 +136,6 @@ class UserController extends GetxController {
       print('Error submitting feedback: $error');
     }
   }
+
+  
 }

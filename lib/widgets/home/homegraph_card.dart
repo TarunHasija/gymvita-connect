@@ -25,7 +25,7 @@ class HomegraphCard extends StatelessWidget {
       return GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
           margin: EdgeInsets.only(right: 10.w),
           decoration: BoxDecoration(
             color: isSelected ? accent : secondary, // Change background color if selected

@@ -1,23 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
-import 'package:gymvita_connect/screens/nav_screens/settings/profile.dart';
 import 'package:gymvita_connect/screens/onboardingScreens/login.dart';
-import 'package:gymvita_connect/utils/colors.dart';
-import 'package:gymvita_connect/widgets/setting/profile_textfield.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
 class ProfileController extends GetxController {
   final TextEditingController resetPasEmailController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController newEmailController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
@@ -87,6 +81,7 @@ class ProfileController extends GetxController {
   }
 
   selectFile(BuildContext context) async {
+    print("previous user image" + userController.userImg.value);
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -103,26 +98,19 @@ class ProfileController extends GetxController {
       String downloadUrl = await uploadTask.ref.getDownloadURL();
 
       await FirebaseFirestore.instance
+          .collection(authController.storedGymCode.value)
+          .doc('clients')
           .collection('clients')
           .doc(authController.storedUid.value)
-          .update({
+          .set({
         'imageUrl': downloadUrl,
-      });
+      }, SetOptions(merge: true));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: secondary,
-          content: Text(
-            "Image updated",
-            style: TextStyle(color: white),
-          ),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      Get.snackbar("Success", "Image updated successfully");
 
-      // Optionally, you can call getUserData to refresh the user's data
-      userController.getUserData(
-          authController.storedUid.value, authController.storedGymCode.value);
+      fetchImage(
+          authController.storedGymCode.value, authController.storedUid.value);
+      print("user image updated");
 
       print(
           "Image uploaded successfully to ${authController.storedGymCode}/clients/");
@@ -131,12 +119,40 @@ class ProfileController extends GetxController {
     }
   }
 
+  fetchImage(String gymCode, String uid) async {
+    print(gymCode);
+    print(uid);
+    print("image");
+    CollectionReference userCollection = FirebaseFirestore.instance
+        .collection(gymCode)
+        .doc('clients')
+        .collection('clients');
+    DocumentReference clientDocRef = userCollection.doc(uid);
+
+    try {
+      clientDocRef.snapshots().listen((DocumentSnapshot docSnapshot) {
+        if (docSnapshot.exists) {
+          print(docSnapshot['email'] ?? '');
+          userController.userImg.value = docSnapshot['details']['image'];
+          print("new user image :${userController.userImg.value}");
+          print("snapshot image" + docSnapshot['details']['image']);
+
+          print('Document exists and updated in real-time');
+        } else {
+          throw Exception("Document not found");
+        }
+      });
+    } catch (error) {
+      print("Error fetching user data: ${error.toString()}");
+    }
+  }
+
   sendOtpForPassword(String email) async {
     final url = Uri.parse('https://ses-server.onrender.com/api/v1/sendOtp');
     final headers = {"Content-Type": "application/json"};
     final body = jsonEncode({
       "email": email,
-      "subject": "Password Reset OTP",
+      "subject": "Password Reset OTP from GymVita Connect",
       "length": 6,
     });
 
@@ -149,8 +165,6 @@ class ProfileController extends GetxController {
         fetchOtp.value = responseData['otp'];
         print('fetched otp : ${fetchOtp.value}');
         print(hashToOtp(fetchOtp.value));
-        // print('fetched otp : ');
-
         isOTPSent.value = true;
         startResendTimer();
       } else {
@@ -195,8 +209,8 @@ class ProfileController extends GetxController {
     }
   }
 
-  void resetPassword(String newPassword, String confirmPassword) {
-    // Check if the new password and confirm password match
+  void resetPassword(
+      String email, String newPassword, String confirmPassword) async {
     if (newPassword.isEmpty || confirmPassword.isEmpty) {
       Get.snackbar('Error', 'Please fill in all fields.');
       return;
@@ -207,14 +221,57 @@ class ProfileController extends GetxController {
       return;
     }
 
-    // Here you can add your logic to update the password
-    // For example, you could call an API to update the password
-
     try {
-      Get.to(() => const LoginScreen());
-      Get.snackbar('Success', 'Password updated successfully.');
+      final response = await http.post(
+        Uri.parse(
+            "https://us-central1-gymvita-connect-88697.cloudfunctions.net/JWTToken/generate"),
+        headers: {
+          "Content-Type": "application/json",
+          "alg": "HS256",
+          "typ": "JWT",
+        },
+        body: jsonEncode({
+          "email": email,
+          "password": newPassword,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final token = jsonDecode(response.body)['token'];
+
+        final usersRef =
+            FirebaseFirestore.instance.collection('GymsCommonCollection');
+        final userSnapshot =
+            await usersRef.where('email', isEqualTo: email).get();
+
+        if (userSnapshot.docs.isNotEmpty) {
+          await usersRef.doc(userSnapshot.docs[0].id).update({
+            'jwtToken': token,
+          });
+
+          Get.snackbar('Success', 'Password updated successfully.');
+
+          Get.offAll(() => const LoginScreen());
+        } else {
+          Get.snackbar('Error', 'User not found in the database.');
+        }
+      } else {
+        Get.snackbar(
+            'Error', 'Failed to generate JWT token: ${response.reasonPhrase}');
+      }
     } catch (e) {
       Get.snackbar('Error', 'Failed to update password: $e');
     }
+  }
+
+  checkUserExists(String email) async {
+    CollectionReference userRef =
+        FirebaseFirestore.instance.collection('GymsCommonCollection');
+
+    QuerySnapshot querySnapshot =
+        await userRef.where('email', isEqualTo: email).get();
+
+    print(querySnapshot.docs);
+    return querySnapshot.docs.isNotEmpty;
   }
 }

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:gymvita_connect/controllers/analysis_form_controller.dart';
+import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/navbar_screen.dart';
 import 'package:gymvita_connect/screens/onboardingscreens/login.dart';
 import 'package:gymvita_connect/utils/colors.dart';
@@ -16,6 +17,7 @@ class AuthController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final RxBool isLoading = false.obs;
+  final RxString userEmail = ''.obs;
 
   @override
   void onInit() {
@@ -29,18 +31,22 @@ class AuthController extends GetxController {
     isLoading.value = true;
     print('Login started');
 
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
+    final UserController userController = Get.find<UserController>();
+
 
     try {
-      print('Sending login request with email: $email');
+    final userEmail = emailController.text.trim();
+    userController.userEmail.value= userEmail;
+    final password = passwordController.text.trim();
+      print('Sending login request with email: $userEmail');
+
       final response = await http.post(
         Uri.parse(
             "https://us-central1-firestore-141df.cloudfunctions.net/JWTToken/generate"),
         headers: {
           "Content-Type": "application/json",
         },
-        body: jsonEncode({'email': email, 'password': password}),
+        body: jsonEncode({'email': userEmail, 'password': password}),
       );
 
       if (response.statusCode == 200) {
@@ -48,7 +54,10 @@ class AuthController extends GetxController {
         final tokenFromServer = responseData['token'];
         print('Received token from server: $tokenFromServer');
 
-        final result = await authUser(email);
+        final result = await authUser(userEmail);
+        print("---------------user email value ----------------" + userEmail);
+
+
         if (result == null) {
           print('User does not exist');
           _showAlertDialog(context, "User does not exist");
@@ -63,8 +72,6 @@ class AuthController extends GetxController {
           print('Token validation successful');
           storedUid.value = result['uid'];
           storedGymCode.value = result['gymCode'];
-          print(
-              "User Data GYMCODE and USERUID: ${storedGymCode.value} - ${storedUid.value}");
 
           final clientResponse = await clientDetails(result['uid']);
           if (clientResponse == 0) {
@@ -74,7 +81,7 @@ class AuthController extends GetxController {
           //! shared preference
 
           final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('email', email);
+          await prefs.setString('email', userEmail);
           await prefs.setString('password', password);
 
           MonthlyAnalysisController monthlyAnalysisController =
@@ -93,19 +100,6 @@ class AuthController extends GetxController {
       isLoading.value = false;
       print('Login process completed');
     }
-  }
-
-  Future<void> logout() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    await prefs.clear();
-    await prefs.remove('email');
-    await prefs.remove('password');
-    emailController.clear();
-    passwordController.clear();
-
-    Get.offAll(
-        () => const LoginScreen()); 
   }
 
   Future<Map<String, dynamic>?> authUser(String email) async {
@@ -137,6 +131,18 @@ class AuthController extends GetxController {
       print('Error fetching user data: ${error.toString()}');
       return null;
     }
+  }
+
+  Future<void> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.clear();
+    await prefs.remove('email');
+    await prefs.remove('password');
+    emailController.clear();
+    passwordController.clear();
+
+    Get.offAll(() => const LoginScreen());
   }
 
   Future<dynamic> clientDetails(String uid) async {

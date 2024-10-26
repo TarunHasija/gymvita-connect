@@ -40,7 +40,7 @@ dependencies:
   cloud_firestore: ^5.2.1
   flutter_screenutil: ^5.9.3
   font_awesome_flutter: ^10.7.0
-  fl_chart: ^0.68.0
+  fl_chart: ^0.69.0
   intl: ^0.19.0
   google_fonts: ^6.2.1
   material_symbols_icons: ^4.2780.0
@@ -53,6 +53,10 @@ dependencies:
   firebase_storage: ^12.3.2
   gap: ^3.0.1
   flutter_launcher_icons: ^0.14.1
+  youtube_player_flutter: ^9.1.1
+  url_launcher: ^6.3.1
+  webview_flutter: ^4.10.0
+  flutter_local_notifications: ^17.2.4
 
 dev_dependencies:
   flutter_test:

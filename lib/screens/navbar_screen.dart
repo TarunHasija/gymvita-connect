@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gymvita_connect/controllers/auth_controller.dart';
+import 'package:gymvita_connect/controllers/featured_content_controller.dart';
+import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
+import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/analysis/analysis_screen.dart';
-import 'package:gymvita_connect/screens/nav_screens/home/home_page.dart';
+import 'package:gymvita_connect/screens/nav_screens/home/homepage/home_page.dart';
 import 'package:gymvita_connect/screens/nav_screens/payment/payment_screen.dart';
 import 'package:gymvita_connect/screens/nav_screens/settings/settings_screen.dart';
 import 'package:gymvita_connect/utils/colors.dart';
@@ -12,6 +16,9 @@ class NavbarScreen extends StatelessWidget {
 
   // Initialize NavbarController
   final NavbarController navbarController = Get.put(NavbarController());
+  final AuthController authController = Get.find<AuthController>();
+  final UserController userController = Get.find<UserController>();
+  final FeaturedContentController featuredContentController =Get.put(FeaturedContentController());
 
   final List<Widget> screenList = [
     const HomePage(),
@@ -25,8 +32,8 @@ class NavbarScreen extends StatelessWidget {
     return Scaffold(
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          splashColor: Colors.transparent, // Remove splash effect
-          highlightColor: Colors.transparent, // Remove highlight effect
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
         ),
         child: Obx(
           () => BottomNavigationBar(

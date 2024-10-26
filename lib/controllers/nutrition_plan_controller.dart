@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
+import 'package:intl/intl.dart';
+
 class NutritionPlanController extends GetxController {
   @override
   void onInit() {
-    super.onInit();
     fetchNutritionPlan();
+    super.onInit();
   }
 
   var isRemindMe = false.obs;
@@ -16,29 +18,25 @@ class NutritionPlanController extends GetxController {
 
   final AuthController authController = Get.find<AuthController>();
 
-  // Store the DocumentSnapshot separately
   final nutritionSnapshot = Rx<DocumentSnapshot?>(null);
 
-  // Store the list of details separately
   final nutritionDetails = Rx<List<dynamic>?>(null);
+  RxList<String> timeList = <String>[].obs;
+
+  RxMap<String, String> timeMealMap = <String, String>{}.obs;
 
   Future<void> fetchNutritionPlan() async {
-    // Check if storedGymCode is available
-    if (authController.storedGymCode.value == null ||
-        authController.storedGymCode.value.isEmpty) {
+    if (authController.storedGymCode.value.isEmpty) {
       print("storedGymCode is not set. Cannot fetch nutrition plan.");
-      return; // Exit the function early
+      return;
     }
 
-    // Ensure that storedUid is also available before proceeding
-    if (authController.storedUid.value == null ||
-        authController.storedUid.value.isEmpty) {
+    if (authController.storedUid.value.isEmpty) {
       print("storedUid is not set. Cannot fetch nutrition plan.");
-      return; // Exit the function early
+      return;
     }
 
     try {
-      // Proceed with Firestore query if both storedGymCode and storedUid are set
       DocumentReference nutritionDocRef = FirebaseFirestore.instance
           .collection(authController.storedGymCode.value)
           .doc('clients')
@@ -47,18 +45,40 @@ class NutritionPlanController extends GetxController {
 
       DocumentSnapshot documentSnapshot = await nutritionDocRef.get();
 
-      // Assign the documentSnapshot to nutritionSnapshot
       nutritionSnapshot.value = documentSnapshot;
 
-      // Extract the details array from the document and assign it
       if (documentSnapshot.exists) {
         nutritionDetails.value =
             documentSnapshot['NutritionPlan'][0]['details'];
-      } else {
-        nutritionDetails.value = [];
+
+        print(nutritionDetails.value);
+
+        for (var item in nutritionDetails.value!) {
+  // Extract the 'time' as a String
+  String? timeStr = item['time'];
+  String? meal = item['meal'];
+
+  if (timeStr != null && meal != null) {
+    try {
+      // Parse the time string "HH:mm" into a DateTime object
+      DateTime parsedTime = DateFormat("HH:mm").parse(timeStr);
+      
+      // Create a new DateTime by combining the current date and parsed time
+      DateTime now = DateTime.now();
+      DateTime scheduledTime = DateTime(now.year, now.month, now.day, parsedTime.hour, parsedTime.minute);
+
+      // Add the formatted time and meal to the map
+      timeMealMap[DateFormat.jm().format(scheduledTime)] = meal;
+    } catch (e) {
+      print("Error parsing time: $e");
+    }
+  }
+}
       }
     } catch (e) {
       print("Error fetching nutrition plan: $e");
     }
   }
+
+  setReminder() {}
 }

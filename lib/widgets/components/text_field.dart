@@ -52,7 +52,6 @@ class TextFieldInput extends StatelessWidget {
       ),
       obscureText: isPassword && !showPassword,
       onChanged: (value) {
-        // Check if the field is not a password field, and convert to lowercase
         if (!isPassword) {
           textEditingController.text = value.toLowerCase();
           textEditingController.selection = TextSelection.fromPosition(

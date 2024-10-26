@@ -2,28 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/nutrition_plan_controller.dart';
-import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/utils/colors.dart';
-import 'package:gymvita_connect/widgets/appbar.dart';
+import 'package:gymvita_connect/widgets/components/appbar.dart';
+import 'package:intl/intl.dart';
 
-class NutritionPlanPage extends StatefulWidget {
+class NutritionPlanPage extends StatelessWidget {
   const NutritionPlanPage({super.key});
-  @override
-  State<NutritionPlanPage> createState() => _NutritionPlanPageState();
-}
-
-class _NutritionPlanPageState extends State<NutritionPlanPage> {
-  final UserController userController = Get.find<UserController>();
-  final NutritionPlanController nutritionplanController =
-      Get.find<NutritionPlanController>();
-
-  bool isRemindMe = false;
 
   @override
   Widget build(BuildContext context) {
+    final NutritionPlanController nutritionplanController =
+        Get.find<NutritionPlanController>();
     TextTheme theme = Theme.of(context).textTheme;
-
-    String reminderText = isRemindMe ? 'Stop Reminder' : 'Remind Me';
 
     return Scaffold(
       appBar: const CustomAppBar(title: 'Nutrition Plan'),
@@ -31,8 +21,6 @@ class _NutritionPlanPageState extends State<NutritionPlanPage> {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Stack(
           children: [
-            // Scrollable content
-
             Positioned.fill(
               child: Container(
                 padding: EdgeInsets.only(top: 60.h),
@@ -45,13 +33,10 @@ class _NutritionPlanPageState extends State<NutritionPlanPage> {
 
                     if (snapshot.hasError) {
                       return const Center(
-                          child:
-                              Text('Please contact your gym for Nutrition Plan')
-                          // Text('Error: ${snapshot.error}')
-                          );
+                          child: Text(
+                              'Please contact your gym for Nutrition Plan'));
                     }
 
-                    // Check if the details array is available
                     var details =
                         nutritionplanController.nutritionDetails.value;
                     if (details == null || details.isEmpty) {
@@ -59,19 +44,18 @@ class _NutritionPlanPageState extends State<NutritionPlanPage> {
                           child: Text('No Nutrition Plan available.'));
                     }
 
-                    // Build the UI based on the number of items in details
                     return ListView.builder(
                       itemCount: details.length,
                       itemBuilder: (context, index) {
                         var item = details[index] as Map<String, dynamic>;
+
                         return Container(
                           margin: EdgeInsets.symmetric(vertical: 10.h),
                           decoration: BoxDecoration(
                             border: const Border(
                               left: BorderSide(
                                 width: 5,
-                                color:
-                                    accent, // Replace accent with the actual color
+                                color: accent,
                               ),
                             ),
                             color:
@@ -86,8 +70,14 @@ class _NutritionPlanPageState extends State<NutritionPlanPage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(item['time'] ?? 'No time',
-                                      style: theme.bodyMedium),
+                                  Text(
+                                    item['time'] != null
+                                        ? DateFormat.jm().format(
+                                            DateFormat("HH:mm")
+                                                .parse(item['time']))
+                                        : 'No time',
+                                    style: theme.bodyMedium,
+                                  ),
                                   Text(item['meal'] ?? 'No meal',
                                       style: theme.bodyMedium),
                                 ],
@@ -145,39 +135,43 @@ class _NutritionPlanPageState extends State<NutritionPlanPage> {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(right: 10.w),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            isRemindMe = !isRemindMe;
-                          });
-                        }, // Corrected to trigger the callback
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: accent, width: 1.2.h),
-                            color: accent,
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 15.w),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.notifications_active_outlined,
-                                    size: 20.h,
-                                  ),
-                                  SizedBox(
-                                    width: 5.w,
-                                  ),
-                                  Text(reminderText, style: theme.bodySmall),
-                                ],
+                      child: Obx(() {
+                        String reminderText =
+                            nutritionplanController.isRemindMe.value
+                                ? "Stop Reminder"
+                                : "Remind Me";
+                        return InkWell(
+                          onTap: () {
+                            nutritionplanController.toggleReminder();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: accent, width: 1.2.h),
+                              color: accent,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 15.w),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.notifications_active_outlined,
+                                      size: 20.h,
+                                    ),
+                                    SizedBox(
+                                      width: 5.w,
+                                    ),
+                                    Text(reminderText, style: theme.bodySmall),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                     )
                   ],
                 ),

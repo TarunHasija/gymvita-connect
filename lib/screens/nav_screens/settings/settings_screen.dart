@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gymvita_connect/controllers/auth_controller.dart';
 import 'package:gymvita_connect/controllers/gyminfo_controller.dart';
-import 'package:gymvita_connect/controllers/profile_controller.dart';
 import 'package:gymvita_connect/controllers/usercontroller.dart';
 import 'package:gymvita_connect/screens/nav_screens/home/dashboard_card_screens/pay_fee/payfee.dart';
 import 'package:gymvita_connect/screens/nav_screens/payment/payment_screen.dart';
@@ -42,19 +41,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Column(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            Get.to(() => NavbarScreen());
-                          },
-                          icon: const Icon(Icons.arrow_back_ios_new_rounded))
-                    ],
-                  ),
-                  Row(
-                    children: [
+                  
+                  
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -71,21 +61,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       SizedBox(
                         width: 15.w,
                       ),
-                      CircleAvatar(
-                        radius: 20.r,
-                        backgroundImage: (userController
-                                        .userDocSnap.value?['details.image'] ==
-                                    null ||
-                                userController
-                                        .userDocSnap.value!['details.image'] ==
-                                    "")
-                            ? const AssetImage(
-                                'assets/images/defaultprofile.png') // Make sure the asset path is correct
-                            : NetworkImage(userController.userDocSnap
-                                .value!['details.image']) as ImageProvider,
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(() => Profile());
+                        },
+                        child: CircleAvatar(
+                          radius: 26.r,
+                          backgroundImage: (userController.userDocSnap
+                                          .value?['details.image'] ==
+                                      null ||
+                                  userController.userDocSnap
+                                          .value!['details.image'] ==
+                                      "")
+                              ? const AssetImage(
+                                  'assets/images/defaultprofile.png') // Make sure the asset path is correct
+                              : NetworkImage(
+                                  "${userController.userDocSnap.value!['details.image']}?timestamp=${DateTime.now().millisecondsSinceEpoch}",
+                                ) as ImageProvider,
+                        ),
                       ),
-                    ],
-                  ),
+                    
+                  
                 ],
               ),
               Container(
@@ -150,7 +146,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     // Left Column with Gym Info
                     Expanded(
-                      // Wrap this column in Expanded to ensure it uses available space
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -231,7 +226,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ? const AssetImage(
                               'assets/images/uploadavatarpng.png.png') // Placeholder image
                           : NetworkImage(
-                                  gymInfoController.gymData.value?['image'])
+                                  "${gymInfoController.gymData.value?['image']}?timestamp=${DateTime.now().millisecondsSinceEpoch}")
                               as ImageProvider,
                     ),
                   ],
@@ -287,8 +282,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           .viewInsets
                                           .bottom),
                                   child: FeedbackBottomSheet(
-                                    titleController: feedbackTitle,
-                                    messageController: feedbackMessage),
+                                      titleController: feedbackTitle,
+                                      messageController: feedbackMessage),
                                 ));
                               });
                         }),
@@ -301,7 +296,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         icon: MaterialSymbols.help,
                         title: 'Reset password',
                         ontap: () {
-                          const ResetPasswordScreen();
+                          Get.to(()=>ResetPasswordScreen()) ;
                         }),
                     const Divider(
                       endIndent: 20,
