@@ -1,7 +1,7 @@
 
 # GymVita Connect
 
-<img src="https://github.com/user-attachments/assets/b9706919-c15f-4933-9c8b-30ce3d42726a" alt="Image 1" width="400" />
+<img src="https://github.com/user-attachments/assets/c63c097a-6e37-4da6-9456-a8ee04488aac" alt="Image 1"/>
 
 **GymVita Connect** is a centralized gym app designed to elevate the fitness experience for both members and owners. Utilizing Flutter for a smooth cross-platform experience, Firebase for real-time data management, and JWT for secure authentication, the app offers a robust and user-friendly platform.
 
