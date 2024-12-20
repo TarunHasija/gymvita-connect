@@ -26,5 +26,9 @@ GymVita Connect transforms fitness into a community-driven journey, empowering m
 <img src="https://github.com/user-attachments/assets/42930071-7d58-426c-80ff-5dec605b316b" alt="Image 6" width="250" />
 
 
-https://github.com/user-attachments/assets/c54adb37-a597-4142-8f6e-53fb86bdaae6
+
+
+https://github.com/user-attachments/assets/9b4780e3-4aa5-4d94-b97b-e569aeeee885
+
+
 
