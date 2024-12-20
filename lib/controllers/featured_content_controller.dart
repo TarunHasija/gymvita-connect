@@ -18,7 +18,12 @@ class FeaturedContentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchFeaturedContent();
+    // Listen for changes in gymCode and fetch content once it's not empty
+    ever(authController.storedGymCode, (String gymCode) {
+      if (gymCode.isNotEmpty) {
+        fetchFeaturedContent();
+      }
+    });
   }
 
   fetchFeaturedContent() async {

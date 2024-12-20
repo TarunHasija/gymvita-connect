@@ -30,7 +30,7 @@ class CustomTextButton extends StatelessWidget {
           ),
         ),
         onPressed: () async {
-          await Future.sync(() => btnOnTap());
+           btnOnTap();
         },
         child: Text(
           buttonText,
